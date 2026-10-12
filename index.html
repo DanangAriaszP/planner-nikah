@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F2F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141917" media="(prefers-color-scheme: dark)">
+<title>Planner Nikah</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='17' r='8' fill='none' stroke='%233D675C' stroke-width='3'/%3E%3Ccircle cx='20' cy='17' r='8' fill='none' stroke='%2394656F' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: satu kolom tenang, kartu tipis bergaris, navigasi bawah seperti aplikasi HP */
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --surface-2:#E8ECE7; --ink:#1F2A27; --muted:#64706B; --line:#D8DED7;
+  --accent:#3D675C; --accent-ink:#FFFFFF; --accent-soft:#DDE8E2;
+  --pA:#4F6B86; --pA-soft:#E1E8EF; --pB:#94656F; --pB-soft:#F0E4E6;
+  --ok:#47785A; --ok-soft:#DFEBE2; --warn:#9A6F28; --warn-soft:#F2E9D7; --danger:#A04E46;
+  --scrim:rgba(20,28,25,.38); --shadow:0 10px 30px rgba(20,28,25,.12);
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:12px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141917; --surface:#1B2220; --surface-2:#252E2B; --ink:#E4EAE6; --muted:#98A49F; --line:#2F3935;
+  --accent:#8CB6A8; --accent-ink:#0F1D19; --accent-soft:#223430;
+  --pA:#94AECA; --pA-soft:#243140; --pB:#CC9CA6; --pB-soft:#3A2A2E;
+  --ok:#86B596; --ok-soft:#21342A; --warn:#D3A862; --warn-soft:#3A3020; --danger:#D98B82;
+  --scrim:rgba(0,0,0,.55); --shadow:0 10px 30px rgba(0,0,0,.4); color-scheme:dark}}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.app{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:0 104px}
+
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-block:20px 8px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.couple{font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.15;margin:2px 0 0;text-wrap:balance}
+.couple i{color:var(--muted);font-style:italic;padding-inline:2px}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:40px;height:40px;display:grid;place-items:center;flex:none;position:relative}
+.iconbtn svg{width:19px;height:19px}
+.iconbtn .badge{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--pB);border:2px solid var(--surface)}
+
+h2.sec{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0;text-wrap:balance}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:26px 0 10px}
+.sub{color:var(--muted);font-size:13px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;min-width:0}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.list > *{padding:13px 16px}
+.list > * + *{border-top:1px solid var(--line)}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 14px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.danger{color:var(--danger)}
+.btn.block{width:100%;justify-content:center;padding:12px}
+.btn svg{width:15px;height:15px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;font-size:13px}
+
+.bar{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.bar > span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.split{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--surface-2);gap:2px}
+.split > span{display:block;height:100%}
+
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.pill.A{background:var(--pA-soft);color:var(--pA)} .pill.B{background:var(--pB-soft);color:var(--pB)} .pill.AB,.pill.C{background:var(--accent-soft);color:var(--accent)}
+.st-nego{background:var(--warn-soft);color:var(--warn)} .st-deal{background:var(--accent-soft);color:var(--accent)} .st-lunas{background:var(--ok-soft);color:var(--ok)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+button.pill{border:0}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:500;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.banner{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 14px;font-size:13px;margin-top:8px}
+.banner.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.banner.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.banner.err{background:var(--surface);border-color:var(--danger);color:var(--danger)}
+
+/* Beranda */
+.count{display:flex;align-items:flex-end;gap:14px;margin-top:14px}
+.count b{font-family:var(--f-display);font-weight:400;font-size:64px;line-height:.9;letter-spacing:-.02em}
+.count small{display:block;color:var(--muted);font-size:13px}
+.count strong{display:block;font-size:15px;font-weight:600}
+.kpi{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:baseline}
+.kpi .bar{grid-column:1/-1}
+.kpi .v{font-weight:600}
+.feed{display:flex;gap:10px;align-items:flex-start}
+.av{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface-2);color:var(--muted)}
+.av.A{background:var(--pA-soft);color:var(--pA)} .av.B{background:var(--pB-soft);color:var(--pB)}
+
+/* Uang */
+.big{font-family:var(--f-display);font-size:34px;line-height:1.1;font-weight:400}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cols3 > div{min-width:0}
+.lbl{font-size:12px;color:var(--muted)}
+.val{font-weight:600}
+.kant{cursor:pointer}
+.kant:hover{background:var(--surface-2)}
+.amt{font-weight:600;white-space:nowrap}
+.amt.in{color:var(--ok)} .amt.out{color:var(--danger)}
+
+/* Vendor */
+.vcat{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:18px 2px 8px}
+.vcard .name{font-weight:600;font-size:16px;background:none;border:0;padding:0;text-align:left}
+.vmeta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.vnote{font-size:13px;color:var(--muted);margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* Checklist */
+.chk{display:flex;gap:12px;align-items:flex-start}
+.chk input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;flex:none;margin:1px 0 0;display:grid;place-items:center;background:var(--surface);cursor:pointer}
+.chk input:checked{background:var(--accent);border-color:var(--accent)}
+.chk input:checked::after{content:"";width:10px;height:6px;border-left:2px solid var(--accent-ink);border-bottom:2px solid var(--accent-ink);transform:translateY(-1px) rotate(-45deg)}
+.chk .t{font-weight:500}
+.chk.done .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.chk .k{font-size:13px;color:var(--muted);margin-top:2px}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:22px 2px 8px}
+.ghead h3{margin:0;font-size:15px;font-weight:600}
+.flags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* Tamu */
+.trow{display:flex;align-items:center;gap:10px}
+.tname{flex:1;min-width:0;background:none;border:0;padding:0;text-align:left;display:flex;flex-direction:column}
+.tname b{font-weight:600;overflow-wrap:anywhere}
+.iconbtn.sm{width:34px;height:34px;border-radius:9px;color:var(--ok)}
+.iconbtn.sm svg{width:17px;height:17px}
+.rs-hadir{background:var(--ok-soft);color:var(--ok)} .rs-tidak{color:var(--danger)}
+.search{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;margin:12px 0 10px}
+.guide h4{margin:18px 0 6px;font-size:15px}
+.guide ol{margin:0;padding-left:20px;line-height:1.7;font-size:14px}
+.guide p{font-size:14px;margin:6px 0 0}
+
+/* Pasangan */
+.code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:30px;letter-spacing:.2em;font-weight:600;text-align:center;padding:16px 8px;border:1px dashed var(--line);border-radius:12px;background:var(--bg);user-select:all;overflow-wrap:anywhere}
+.linkbox{font-size:13px;color:var(--muted);overflow-wrap:anywhere;user-select:all;background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.person{display:flex;align-items:center;gap:12px}
+.person .av{width:36px;height:36px;font-size:15px}
+
+/* Navigasi */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 9px;font-size:10.5px;font-weight:600;color:var(--muted);min-width:0}
+.tabs button svg{width:21px;height:21px}
+.tabs button[aria-current="page"]{color:var(--accent)}
+@media (min-width:760px){
+  .tabs{left:50%;right:auto;transform:translateX(-50%);bottom:18px;width:600px;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding-bottom:0}
+}
+
+/* Sheet */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);border-radius:18px 18px 0 0;max-height:90%;overflow:auto;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));box-shadow:var(--shadow)}
+@media (min-width:760px){.sheet{left:50%;bottom:auto;top:50%;transform:translate(-50%,-50%);width:520px;border-radius:16px;max-height:86%}}
+.sheet h3{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0}
+form.f{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fld > span{font-size:13px;font-weight:600}
+.fld em{font-style:normal;font-size:12px;color:var(--muted);font-weight:400}
+.fld input,.fld select,.fld textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:10px 12px;min-width:0}
+.fld textarea{min-height:70px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+.seg label{position:relative;text-align:center;padding:8px 6px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg label:has(input:checked){background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;max-width:calc(100% - 32px)}
+.empty{text-align:center;padding:28px 18px;color:var(--muted)}
+.empty p{margin:0 0 14px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.note{font-size:12.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+
+/* Layar masuk & mulai */
+.gate{max-width:420px;margin:0 auto;padding-block:9vh 40px}
+.gate h1{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:1.1;margin:6px 0 8px;text-wrap:balance}
+.gate .lead{color:var(--muted);margin:0 0 20px}
+.gate .card + .card{margin-top:14px}
+.authtabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);margin:-4px -16px 4px}
+.authtabs button{border:0;background:none;padding:10px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.authtabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.pwwrap{position:relative}
+.pwwrap input{padding-right:64px}
+.pwwrap button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-size:12px;font-weight:600;padding:6px}
+.foot{display:flex;justify-content:center;gap:6px;margin-top:18px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+
+@media (max-width:420px){.cols3{grid-template-columns:1fr 1fr}.cols3 > div:last-child{grid-column:1/-1}.vmeta{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="empty" style="margin-top:30vh">Memuat planner…</div></div>
+<nav class="tabs" id="tabs" hidden></nav>
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="row between"><h3 id="sheetTitle"></h3><button class="iconbtn" id="sheetClose" aria-label="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div id="sheetBody"></div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.0/dist/umd/supabase.js"></script>
+<script>
+/* ---------- Data referensi ---------- */
+const KATEGORI=['Venue','Catering','Dekorasi','MUA & Busana','Foto & Video','Hiburan & MC','Undangan','Souvenir','WO / WP','Mahar & Seserahan','Cincin','Transportasi','Lainnya'];
+const STATUS=[['incaran','Incaran'],['nego','Nego'],['deal','Deal'],['lunas','Lunas']];
+const KANTONG_STD=['KUA & Berkas','Venue','Catering','Dekorasi','MUA & Busana','Foto & Video','Mahar & Seserahan','Cincin','Undangan & Souvenir','Hiburan & MC','Dana Darurat'];
+const FASE=['12–9 bulan sebelum','9–6 bulan sebelum','6–3 bulan sebelum','3–1 bulan sebelum','Minggu terakhir','Setelah hari H','Lainnya'];
+const TUGAS_STD={
+ '12–9 bulan sebelum':['Sepakati total budget dan sumber dana','Tentukan tanggal dan konsep acara','Survei dan booking venue','Susun draf daftar tamu kedua keluarga','Buka tabungan bersama'],
+ '9–6 bulan sebelum':['Putuskan pakai WO/WP atau tidak','Booking catering dan jadwalkan test food','Booking fotografer dan videografer','Booking MUA dan busana','Pilih vendor dekorasi'],
+ '6–3 bulan sebelum':['Urus surat pengantar RT/RW dan kelurahan','Ikut bimbingan perkawinan (Bimwin) di KUA','Cek kesehatan dan imunisasi TT','Pesan undangan dan souvenir','Beli cincin','Siapkan mahar dan seserahan'],
+ '3–1 bulan sebelum':['Daftar nikah di KUA atau lewat SIMKAH','Serahkan berkas ke KUA tujuan','Sebar undangan','Fitting busana','Konfirmasi wali dan dua saksi','Finalkan rundown acara'],
+ 'Minggu terakhir':['Technical meeting dengan semua vendor','Pelunasan vendor sesuai kontrak','Siapkan berkas asli untuk hari akad','Istirahat cukup'],
+ 'Setelah hari H':['Bayar sisa tagihan vendor','Ambil buku nikah','Perbarui KTP dan KK di Disdukcapil','Kirim ucapan terima kasih']
+};
+const SES_STD={
+ mahar:['Mahar (uang tunai atau emas)'],
+ seserahan:["Seperangkat alat salat (mukena, sajadah, Al-Qur'an)",'Pakaian atau kain','Tas','Sepatu atau sandal','Kosmetik dan skincare','Perlengkapan mandi','Pakaian dalam','Parfum','Perhiasan','Jam tangan','Kue atau makanan tradisional','Buah-buahan','Wadah dan hiasan hantaran']
+};
+const GRUP_STD=['Keluarga inti','Keluarga besar','Teman kantor','Teman kuliah','Teman sekolah','Tetangga','Rekan orang tua'];
+const TPL_UNDANGAN='Halo {nama}, dengan penuh syukur kami {pria} & {wanita} mengundang kamu untuk hadir di hari pernikahan kami pada {tanggal}. Detail waktu dan lokasi kami kirim menyusul. Mohon kabari kehadirannya ya. Terima kasih.';
+/* Berkas nikah: dirangkum dari Kemenag (Bimas Islam), PMA 30/2024 dan liputan media 2025–2026 */
+const BERKAS_CATIN=[
+ {id:'n1',t:'Surat pengantar nikah (N1) dari kelurahan/desa',k:'Bawa surat pengantar RT/RW. Kelurahan biasanya sekalian mengeluarkan N2 dan N4.'},
+ {id:'n2',t:'Surat keterangan asal-usul (N2)'},
+ {id:'n4',t:'Surat keterangan tentang orang tua (N4)'},
+ {id:'ktp',t:'Fotokopi KTP-el'},
+ {id:'kk',t:'Fotokopi Kartu Keluarga'},
+ {id:'akta',t:'Fotokopi akta kelahiran'},
+ {id:'ijazah',t:'Fotokopi ijazah terakhir',k:'Diminta di sebagian KUA.'},
+ {id:'foto',t:'Pas foto latar biru 2×3 dan 4×6',k:'Jumlah lembar dan warna latar ikuti ketentuan KUA setempat.'},
+ {id:'sehat',t:'Surat keterangan sehat dari puskesmas/faskes'},
+ {id:'tt',t:'Bukti imunisasi TT (Tetanus Toxoid)',k:'Dari puskesmas, untuk calon pengantin wanita.',only:'B'},
+ {id:'bimwin',t:'Sertifikat bimbingan perkawinan (Bimwin)',k:'Wajib untuk kedua calon, diadakan KUA kecamatan.'},
+ {id:'elsimil',t:'Sertifikat Elsimil (Siap Nikah & Hamil) BKKBN',k:'Diminta di sebagian daerah, diisi lewat aplikasi Elsimil.'},
+ {id:'lajang',t:'Surat pernyataan belum pernah menikah',k:'Sebagian KUA meminta, bermeterai Rp10.000.'}
+];
+const KONDISI=[
+ {f:'u21',l:'Di bawah 21 th',t:'Surat izin orang tua (N5)'},
+ {f:'u19',l:'Di bawah 19 th',t:'Dispensasi kawin dari Pengadilan Agama',k:'Usia minimal 19 tahun dihitung pada tanggal akad.'},
+ {f:'cerai',l:'Cerai hidup',t:'Akta cerai dari Pengadilan Agama'},
+ {f:'mati',l:'Cerai mati',t:'Akta kematian pasangan sebelumnya (N6)'},
+ {f:'tni',l:'TNI / Polri',t:'Surat izin komandan atau atasan'},
+ {f:'wna',l:'WNA',t:'Paspor, izin dari kedutaan, dan dokumen izin tinggal',k:'Konfirmasi daftar lengkapnya ke KUA tujuan.'}
+];
+const BERKAS_WALI=[
+ {id:'ktpwali',t:'Fotokopi KTP wali nikah'},
+ {id:'bnortu',t:'Fotokopi buku nikah orang tua calon wanita',k:'Untuk memastikan wali nasab. Opsional di sebagian KUA.'},
+ {id:'saksi',t:'Fotokopi KTP dua orang saksi'}
+];
+const BERKAS_DAFTAR=[
+ {id:'n3',t:'Surat persetujuan kedua mempelai (N3)'},
+ {id:'rekom',t:'Surat rekomendasi / numpang nikah dari KUA asal',k:'Karena akad di luar kecamatan domisili salah satu calon.',when:p=>p.kondisi?.luarKec},
+ {id:'materai',t:'Siapkan beberapa lembar meterai Rp10.000'},
+ {id:'daftar',t:'Daftar kehendak nikah di KUA atau online (SIMKAH / PUSAKA)',k:'Paling lambat 10 hari kerja sebelum akad.'},
+ {id:'serah',t:'Serahkan berkas ke KUA tujuan',k:'Jika daftar online, paling lambat 15 hari kerja setelah mendaftar.'},
+ {id:'bayar',t:'Bayar biaya nikah Rp600.000 (PNBP) lewat bank',k:'Karena akad di luar KUA atau di luar jam kerja. Akad di KUA pada jam kerja gratis.',when:p=>p.lokasi==='luar'},
+ {id:'periksa',t:'Pemeriksaan nikah di KUA bersama wali'}
+];
+const BERKAS_SETELAH=[
+ {id:'bukunikah',t:'Terima buku nikah / kutipan akta nikah'},
+ {id:'ktpkk',t:'Perbarui status KTP dan KK di Disdukcapil'},
+ {id:'lain',t:'Perbarui data BPJS dan rekening (jika perlu)'}
+];
+
+/* ---------- Utilitas ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp=n=>(n<0?'−':'')+'Rp'+Math.abs(Math.round(n||0)).toLocaleString('id-ID');
+function parseRp(v){
+  v=String(v||'').toLowerCase().replace(/\s/g,'').replace(/^rp/,'');
+  let m=1;
+  if(/(jt|juta)$/.test(v)){m=1e6;v=v.replace(/(jt|juta)$/,'')}
+  else if(/(rb|ribu|k)$/.test(v)){m=1e3;v=v.replace(/(rb|ribu|k)$/,'')}
+  if(m>1){const n=parseFloat(v.replace(',','.').replace(/[^\d.]/g,''));return isNaN(n)?0:Math.round(n*m)}
+  return parseInt(v.replace(/\D/g,''),10)||0;
+}
+const fmtInput=n=>n?Number(n).toLocaleString('id-ID'):'';
+function todayISO(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+function fmtDate(iso,long){if(!iso)return '';const d=new Date(String(iso).length>10?iso:iso+'T00:00:00');return d.toLocaleDateString('id-ID',long?{weekday:'long',day:'numeric',month:'long',year:'numeric'}:{day:'numeric',month:'short',year:'numeric'})}
+function daysUntil(iso){if(!iso)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(iso+'T00:00:00')-t)/864e5)}
+const pct=(a,b)=>b>0?Math.max(0,Math.min(100,a/b*100)):0;
+function waLink(n,text){let d=String(n||'').replace(/\D/g,'');if(!d)return '';if(d.startsWith('0'))d='62'+d.slice(1);else if(d.startsWith('8'))d='62'+d;return 'https://wa.me/'+d+(text?'?text='+encodeURIComponent(text):'')}
+function igLink(h){h=String(h||'').trim();if(!h)return '';const m=h.match(/instagram\.com\/([^/?#]+)/i);h=(m?m[1]:h).replace(/^@/,'');return h?'https://instagram.com/'+encodeURIComponent(h):''}
+function igHandle(h){const u=igLink(h);return u?'@'+decodeURIComponent(u.split('/').pop()):''}
+function safeUrl(u){u=String(u||'').trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;try{const x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:''}catch(e){return ''}}
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const BASE_URL=location.origin+location.pathname;
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('Tersalin')}catch(e){toast('Tidak bisa menyalin otomatis. Tekan lama teksnya lalu salin.')}}
+
+const IC={
+ home:'<path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+ vendor:'<path d="M4 9l1.5-4h13L20 9M4 9v10h16V9M4 9c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3s3-1.3 3-3c0 1.7 1.3 3 3 3"/><path d="M10 19v-4h4v4"/>',
+ uang:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/>',
+ berkas:'<path d="M7 3h7l4 4v14H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4M9.5 12h5M9.5 15.5h5"/>',
+ tugas:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+ tamu:'<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/>',
+ pair:'<circle cx="9" cy="13" r="5.5"/><circle cx="15" cy="13" r="5.5"/><path d="M11 5.5l1-2 1 2"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.9" r=".7" fill="currentColor"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8.4 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>',
+ ig:'<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="16.8" cy="7.2" r=".6" fill="currentColor"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+ copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/>'
+};
+const ico=(n,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||1.7}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+
+/* ---------- Supabase ---------- */
+const CFG=window.PLANNER_CONFIG||{};
+const CONFIGURED=!!(CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY&&!/ISI_/.test(CFG.SUPABASE_URL+CFG.SUPABASE_ANON_KEY));
+const sb=(CONFIGURED&&window.supabase)?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY):null;
+
+const params=new URLSearchParams(location.search);
+if(params.get('invite'))store.set('pendingInvite',params.get('invite').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12));
+const IS_RESET=params.get('reset')==='1';
+if(params.has('invite')||IS_RESET){const u=new URL(location.href);u.searchParams.delete('invite');history.replaceState(null,'',u.pathname+u.search+u.hash)}
+
+const S={view:'boot',authTab:store.get('pendingInvite')?'daftar':'masuk',authMsg:null,
+  session:null,userId:null,email:'',recovery:IS_RESET,
+  weddingId:null,myRole:null,mePihak:null,members:[],invite:null,
+  tab:'beranda',plan:null,berkas:null,vendors:[],kantong:[],trx:[],tugas:[],tamu:[],seserahan:[],
+  taskFilter:'semua',vendorFilter:'semua',tamuFilter:'semua',tamuQ:'',prepView:store.get('prep')||'tugas',channel:null};
+const KIND_KEY={vendors:'vendors',kantong:'kantong',transaksi:'trx',tugas:'tugas',tamu:'tamu',seserahan:'seserahan'};
+
+const RPC_ERR={ALREADY_MEMBER:'Akun ini sudah terhubung ke sebuah planner.',INVITE_NOT_FOUND:'Kode undangan tidak ditemukan. Cek lagi hurufnya.',INVITE_USED:'Kode ini sudah dipakai.',INVITE_EXPIRED:'Kode ini sudah kedaluwarsa. Minta pasanganmu membuat kode baru.',WEDDING_FULL:'Planner ini sudah punya pasangan. Satu planner hanya untuk dua orang.',NOT_OWNER:'Hanya pembuat planner yang bisa melakukan ini.',NOT_MEMBER:'Kamu sudah tidak terhubung dengan planner ini.',NOT_PARTNER:'Hanya pasangan yang diundang yang bisa keluar dari planner.',NOT_FOUND:'Data ini sudah dihapus.',NOT_AUTHENTICATED:'Sesi berakhir. Silakan masuk lagi.'};
+function errText(e){
+  const raw=(e&&(e.message||e.error_description))||'',m=raw.toLowerCase();
+  for(const k in RPC_ERR)if(raw.includes(k))return RPC_ERR[k];
+  if(m.includes('invalid login'))return 'Email atau password salah.';
+  if(m.includes('email not confirmed'))return 'Email belum dikonfirmasi. Buka email dari Supabase lalu klik tautan konfirmasinya.';
+  if(m.includes('already registered')||m.includes('already been registered'))return 'Email ini sudah terdaftar. Silakan masuk.';
+  if(m.includes('password should')||m.includes('weak password'))return 'Password terlalu lemah. Pakai minimal 8 karakter campuran huruf dan angka.';
+  if(m.includes('same password')||m.includes('different from the old'))return 'Password baru harus berbeda dari yang lama.';
+  if(m.includes('rate limit')||m.includes('too many')||(e&&e.status===429))return 'Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.';
+  if(m.includes('invalid email')||m.includes('unable to validate email')||m.includes('email address')&&m.includes('invalid'))return 'Format email tidak valid.';
+  if(m.includes('row-level security')||m.includes('permission denied'))return 'Akses ditolak. Muat ulang halaman lalu coba lagi.';
+  if(m.includes('could not find the function')||(e&&e.code==='PGRST202'))return 'Fitur ini belum aktif di server.';
+  if(m.includes('failed to fetch')||m.includes('network')||m.includes('load failed'))return 'Tidak bisa terhubung ke server. Cek koneksi internet.';
+  return raw?'Gagal: '+raw:'Gagal. Coba lagi sebentar.';
+}
+function chk(r){if(r.error)throw r.error;return r.data}
+
+function rowToItem(r){return {...(r.data||{}),id:r.id,by:r.created_by,dibuat:Date.parse(r.created_at)||0}}
+function upsertLocal(r){
+  if(!r||r.wedding_id!==S.weddingId)return;const k=KIND_KEY[r.kind];if(!k)return;
+  const it=rowToItem(r),i=S[k].findIndex(x=>x.id===r.id);
+  if(i>=0)S[k][i]=it;else S[k].push(it);schedule();
+}
+function removeLocal(id){for(const k of Object.values(KIND_KEY)){const i=S[k].findIndex(x=>x.id===id);if(i>=0){S[k].splice(i,1);schedule()}}}
+function applyWedding(data){S.plan=data||{};S.berkas=S.plan.berkas||null;schedule()}
+
+const api={
+  async patchWedding(patch){applyWedding(chk(await sb.rpc('patch_wedding',{p_wedding:S.weddingId,p_patch:patch})))},
+  async set(p,d){return api.update(p,d)},
+  async update(p,d){
+    const [col,id]=p.split('/');
+    if(col==='plan')return api.patchWedding(d);
+    if(col==='berkas')return api.patchWedding({berkas:d});
+    upsertLocal(chk(await sb.rpc('patch_item',{p_id:id,p_patch:d})));
+  },
+  async add(kind,d){const r=chk(await sb.from('items').insert({wedding_id:S.weddingId,kind,data:d}).select().single());upsertLocal(r);return r},
+  async addMany(kind,arr){if(!arr.length)return;const rows=chk(await sb.from('items').insert(arr.map(d=>({wedding_id:S.weddingId,kind,data:d}))).select());rows.forEach(upsertLocal)},
+  async del(p){const id=p.split('/')[1];chk(await sb.from('items').delete().eq('id',id));removeLocal(id)}
+};
+async function save(fn,okMsg){
+  try{await fn();if(okMsg)toast(okMsg);return true}
+  catch(e){console.warn(e);toast(errText(e));
+    const m=String(e&&e.message||'');if(m.includes('NOT_MEMBER')||m.includes('row-level security'))refreshAll(true);
+    return false}
+}
+const meta=()=>({byPihak:S.mePihak||null});
+
+/* ---------- Sesi & data ---------- */
+async function fetchItems(){
+  const out=[];const N=1000;
+  for(let from=0;;from+=N){
+    const rows=chk(await sb.from('items').select('*').eq('wedding_id',S.weddingId).order('created_at',{ascending:true}).range(from,from+N-1));
+    out.push(...rows);if(rows.length<N)break;
+  }
+  for(const k of Object.values(KIND_KEY))S[k]=[];
+  for(const r of out){const k=KIND_KEY[r.kind];if(k)S[k].push(rowToItem(r))}
+}
+async function fetchMembers(){S.members=chk(await sb.from('wedding_members').select('*').eq('wedding_id',S.weddingId))}
+async function fetchInvite(){
+  const rows=chk(await sb.from('invites').select('*').eq('wedding_id',S.weddingId).is('used_by',null).gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(1));
+  S.invite=rows[0]||null;
+}
+async function fetchWedding(){applyWedding(chk(await sb.from('weddings').select('data').eq('id',S.weddingId).single()).data)}
+
+async function loadMembership(){
+  const mem=chk(await sb.from('wedding_members').select('*').eq('user_id',S.userId).maybeSingle());
+  if(!mem){teardown();S.view='join';render();return false}
+  const changed=S.weddingId!==mem.wedding_id;
+  S.weddingId=mem.wedding_id;S.myRole=mem.role;S.mePihak=mem.pihak;
+  await Promise.all([fetchWedding(),fetchMembers(),fetchItems(),fetchInvite()]);
+  if(store.get('pendingInvite')){store.set('pendingInvite',null);toast('Akunmu sudah terhubung ke planner, jadi kode undangan tidak dipakai.')}
+  if(changed||!S.channel)subscribe();
+  S.view='app';render();return true;
+}
+let lastRefresh=0;
+async function refreshAll(force){
+  if(!S.userId||S.view!=='app')return;
+  if(!force&&Date.now()-lastRefresh<15000)return;lastRefresh=Date.now();
+  try{const was=S.weddingId;const ok=await loadMembership();if(!ok&&was)toast('Kamu sudah tidak terhubung dengan planner tadi.')}catch(e){console.warn(e)}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll()});
+
+function subscribe(){
+  teardown();if(!S.weddingId)return;
+  const W=S.weddingId;
+  S.channel=sb.channel('planner-'+W)
+    .on('postgres_changes',{event:'*',schema:'public',table:'items',filter:'wedding_id=eq.'+W},p=>{if(p.eventType==='DELETE')removeLocal(p.old&&p.old.id);else upsertLocal(p.new)})
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'items'},p=>removeLocal(p.old&&p.old.id))
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'weddings',filter:'id=eq.'+W},p=>{if(p.new&&p.new.data)applyWedding(p.new.data)})
+    .on('postgres_changes',{event:'*',schema:'public',table:'wedding_members'},()=>onMembersChanged())
+    .subscribe();
+}
+function teardown(){if(S.channel){try{sb.removeChannel(S.channel)}catch(e){}S.channel=null}}
+async function onMembersChanged(){
+  const had=S.members.some(m=>m.role==='partner');
+  try{
+    const mem=chk(await sb.from('wedding_members').select('*').eq('user_id',S.userId).maybeSingle());
+    if(!mem||mem.wedding_id!==S.weddingId){refreshAll(true);return}
+    await Promise.all([fetchMembers(),fetchInvite()]);
+    const has=S.members.some(m=>m.role==='partner');
+    if(!had&&has&&S.myRole==='owner'){toast('Pasanganmu sudah terhubung');if(!$('#sheet').hidden&&$('#sheetTitle').textContent==='Pasangan')sheetPartner()}
+    schedule();
+  }catch(e){console.warn(e)}
+}
+
+async function handleSession(session){
+  S.session=session;
+  if(!session){teardown();Object.assign(S,{userId:null,email:'',weddingId:null,myRole:null,mePihak:null,members:[],invite:null,plan:null,berkas:null});for(const k of Object.values(KIND_KEY))S[k]=[];if(S.view!=='auth'&&S.view!=='boot')S.authTab='masuk';S.view='auth';render();return}
+  if(S.recovery){S.userId=session.user.id;S.email=session.user.email||'';S.view='recovery';render();return}
+  if(S.userId===session.user.id&&S.view!=='auth'&&S.view!=='boot')return;
+  S.userId=session.user.id;S.email=session.user.email||'';
+  S.view='boot';render();
+  try{await loadMembership()}catch(e){console.warn(e);S.view='error';S.authMsg=errText(e);render()}
+}
+
+/* ---------- Hitungan ---------- */
+const kantongSorted=()=>[...S.kantong].sort((a,b)=>(a.urut??99)-(b.urut??99)||String(a.nama).localeCompare(b.nama));
+function money(){
+  const k={};S.kantong.forEach(x=>k[x.id]={...x,masuk:0,keluar:0});
+  let masuk=0,keluar=0,uM=0,uK=0;const per={A:0,B:0,C:0};
+  for(const t of S.trx){const j=+t.jumlah||0;
+    if(t.tipe==='masuk'){masuk+=j;per[t.pihak in per?t.pihak:'C']+=j;k[t.kantong]?k[t.kantong].masuk+=j:uM+=j}
+    else if(t.tipe==='keluar'){keluar+=j;k[t.kantong]?k[t.kantong].keluar+=j:uK+=j}
+    else if(t.tipe==='pindah'){k[t.dari]?k[t.dari].masuk-=j:uM-=j;k[t.kantong]?k[t.kantong].masuk+=j:uM+=j}
+  }
+  const estimasi=S.kantong.reduce((a,x)=>a+(+x.estimasi||0),0);
+  return{k,masuk,keluar,saldo:masuk-keluar,umum:uM-uK,per,estimasi};
+}
+const vendorPaid=id=>S.trx.filter(t=>t.tipe==='keluar'&&t.vendor===id).reduce((a,t)=>a+(+t.jumlah||0),0);
+const namaPihak=p=>p==='A'?(S.plan?.namaA||'Calon pria'):p==='B'?(S.plan?.namaB||'Calon wanita'):p==='AB'?'Berdua':'Keluarga / bersama';
+const partner=()=>S.members.find(m=>m.user_id!==S.userId)||null;
+function siapa(x){if(x.by&&x.by===S.userId)return 'Kamu';const m=S.members.find(m=>m.user_id===x.by);if(m)return namaPihak(m.pihak);return x.byPihak?namaPihak(x.byPihak):'Seseorang'}
+function pihakOf(x){const m=S.members.find(m=>m.user_id===x.by);return m?m.pihak:(x.byPihak||'')}
+function berkasGroups(){
+  const p=S.plan||{},kd=p.kondisi||{},out=[];
+  for(const s of ['A','B']){
+    const items=BERKAS_CATIN.filter(i=>!i.only||i.only===s).map(i=>({...i,key:s+'_'+i.id}))
+      .concat(KONDISI.filter(c=>kd[s]?.[c.f]).map(c=>({id:c.f,t:c.t,k:c.k,key:s+'_'+c.f})));
+    out.push({key:s,title:'Calon '+(s==='A'?'pengantin pria':'pengantin wanita'),who:namaPihak(s),items});
+  }
+  out.push({key:'W',title:'Wali & saksi',items:BERKAS_WALI.map(i=>({...i,key:'W_'+i.id}))});
+  out.push({key:'D',title:'Pendaftaran di KUA',items:BERKAS_DAFTAR.filter(i=>!i.when||i.when(p)).map(i=>({...i,key:'D_'+i.id}))});
+  const cus=Object.entries(S.berkas?.custom||{}).filter(([,v])=>v&&v.t).map(([id,v])=>({id,t:v.t,k:v.k,key:'X_'+id,custom:true}));
+  if(cus.length)out.push({key:'X',title:'Tambahan dari KUA kalian',items:cus});
+  out.push({key:'S',title:'Setelah akad',items:BERKAS_SETELAH.map(i=>({...i,key:'S_'+i.id}))});
+  return out;
+}
+const isDone=key=>!!S.berkas?.items?.[key]?.done;
+
+/* ---------- Render ---------- */
+let raf=0;function schedule(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;render()})}
+const TABS=[['beranda','Beranda','home'],['vendor','Vendor','vendor'],['uang','Keuangan','uang'],['tamu','Tamu','tamu'],['berkas','Berkas','berkas'],['tugas','Persiapan','tugas']];
+{const h=(location.hash||'').slice(1);S.tab=TABS.some(t=>t[0]===h)?h:(store.get('tab')||'beranda')}
+
+function render(){
+  const app=$('#app');
+  const ae=document.activeElement,fid=ae&&ae.id&&app.contains(ae)?ae.id:null,ss=fid?ae.selectionStart:null;
+  $('#tabs').hidden=S.view!=='app';
+  if(S.view==='app')renderApp(app);
+  else if(S.view==='auth')renderAuth(app);
+  else if(S.view==='recovery')renderRecovery(app);
+  else if(S.view==='join')renderJoin(app);
+  else if(S.view==='config')renderConfig(app);
+  else if(S.view==='error')app.innerHTML=`<div class="gate"><div class="eyebrow">Planner Nikah</div><h1>Belum bisa memuat data</h1><p class="lead">${esc(S.authMsg||'')}</p><div class="btnrow"><button class="btn primary" data-act="reload">Coba lagi</button><button class="btn" data-act="logout">Keluar</button></div></div>`;
+  else app.innerHTML='<div class="empty" style="margin-top:30vh">Memuat planner…</div>';
+  if(fid){const n=document.getElementById(fid);if(n&&n!==document.activeElement){n.focus();try{n.setSelectionRange(ss,ss)}catch(e){}}}
+}
+
+function renderConfig(app){
+  app.innerHTML=`<div class="gate"><div class="eyebrow">Planner Nikah</div><h1>Hubungkan ke Supabase dulu</h1>
+  <p class="lead">${window.supabase?'File config.js masih berisi contoh.':'Pustaka Supabase gagal dimuat. Cek koneksi internet lalu muat ulang.'}</p>
+  <div class="card small"><ol style="margin:0;padding-left:18px;line-height:1.8"><li>Buka proyek Supabase kamu, lalu Project Settings → API Keys.</li><li>Salin Project URL dan Publishable key (atau anon key).</li><li>Tempel ke file <b>config.js</b>, simpan, lalu unggah ulang situsnya.</li></ol></div></div>`;
+}
+
+function pwField(id,label,ac,hint){return `<label class="fld"><span>${label}${hint?` <em>${hint}</em>`:''}</span><div class="pwwrap"><input id="${id}" type="password" required minlength="8" maxlength="72" autocomplete="${ac}"><button type="button" data-act="pwToggle" data-for="${id}">Lihat</button></div></label>`}
+
+function renderAuth(app){
+  const inv=store.get('pendingInvite'),t=S.authTab,msg=S.authMsg;
+  let body='';
+  if(t==='lupa'){
+    body=`<form class="f" id="authForm" novalidate><p class="small muted" style="margin:0">Masukkan email akunmu. Kami kirim tautan untuk membuat password baru.</p>
+    <label class="fld"><span>Email</span><input id="a_email" type="email" required autocomplete="email" value="${esc(store.get('lastEmail')||'')}"></label>
+    <button class="btn primary block" id="a_go">Kirim tautan</button><button type="button" class="linkbtn" data-act="authTab" data-v="masuk" style="align-self:center">Kembali ke halaman masuk</button></form>`;
+  }else{
+    body=`<div class="authtabs" role="tablist"><button role="tab" aria-selected="${t==='masuk'}" data-act="authTab" data-v="masuk">Masuk</button><button role="tab" aria-selected="${t==='daftar'}" data-act="authTab" data-v="daftar">Daftar</button></div>
+    <form class="f" id="authForm" novalidate>
+      <label class="fld"><span>Email</span><input id="a_email" type="email" required autocomplete="email" value="${esc(store.get('lastEmail')||'')}"></label>
+      ${t==='daftar'?pwField('a_pw','Password','new-password','minimal 8 karakter')+pwField('a_pw2','Ulangi password','new-password'):pwField('a_pw','Password','current-password')}
+      <button class="btn primary block" id="a_go">${t==='daftar'?'Buat akun':'Masuk'}</button>
+      ${t==='masuk'?'<button type="button" class="linkbtn" data-act="authTab" data-v="lupa" style="align-self:center">Lupa password?</button>':''}
+    </form>`;
+  }
+  app.innerHTML=`<div class="gate"><div class="eyebrow">Planner Nikah</div><h1>${t==='daftar'?'Buat akun planner':t==='lupa'?'Atur ulang password':'Masuk ke planner kalian'}</h1>
+  <p class="lead">Satu akun untuk satu orang. Setelah masuk, kamu bisa membuat planner lalu mengundang pasanganmu.</p>
+  ${inv?`<div class="banner ok" style="margin:0 0 14px">Kamu diundang untuk bergabung ke planner pasanganmu (kode <b>${esc(inv)}</b>). ${t==='masuk'?'Masuk':'Daftar'} dulu, kodenya sudah kami simpan.</div>`:''}
+  ${msg?`<div class="banner ${msg.ok?'ok':'err'}" style="margin:0 0 14px" role="alert">${esc(msg.text)}</div>`:''}
+  <div class="card">${body}</div></div>`;
+  $('#authForm').onsubmit=onAuthSubmit;
+}
+async function onAuthSubmit(e){
+  e.preventDefault();const t=S.authTab,email=$('#a_email').value.trim().toLowerCase(),btn=$('#a_go');
+  const fail=text=>{S.authMsg={text};render()};
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return fail('Format email tidak valid.');
+  store.set('lastEmail',email);
+  btn.disabled=true;btn.textContent='Sebentar…';
+  try{
+    if(t==='lupa'){
+      chk(await sb.auth.resetPasswordForEmail(email,{redirectTo:BASE_URL+'?reset=1'}));
+      S.authTab='masuk';S.authMsg={ok:true,text:'Kalau email itu terdaftar, tautan untuk membuat password baru sudah dikirim. Cek juga folder spam.'};render();return;
+    }
+    const pw=$('#a_pw').value;
+    if(pw.length<8)return fail('Password minimal 8 karakter.');
+    if(t==='daftar'){
+      if(pw!==$('#a_pw2').value)return fail('Kedua password tidak sama.');
+      const inv=store.get('pendingInvite');
+      const d=chk(await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:BASE_URL+(inv?'?invite='+encodeURIComponent(inv):'')}}));
+      if(d.user&&Array.isArray(d.user.identities)&&d.user.identities.length===0){S.authTab='masuk';return fail('Email ini sudah terdaftar. Silakan masuk.')}
+      if(!d.session){S.authTab='masuk';S.authMsg={ok:true,text:'Akun dibuat. Buka email dari Supabase lalu klik tautan konfirmasi, setelah itu masuk di sini.'};render()}
+      else S.authMsg=null;
+    }else{
+      chk(await sb.auth.signInWithPassword({email,password:pw}));S.authMsg=null;
+    }
+  }catch(err){console.warn(err);fail(errText(err))}
+  finally{if(btn.isConnected){btn.disabled=false;btn.textContent=t==='daftar'?'Buat akun':t==='lupa'?'Kirim tautan':'Masuk'}}
+}
+
+function renderRecovery(app){
+  app.innerHTML=`<div class="gate"><div class="eyebrow">Planner Nikah</div><h1>Buat password baru</h1><p class="lead">Untuk akun ${esc(S.email)}</p>
+  ${S.authMsg?`<div class="banner err" style="margin:0 0 14px" role="alert">${esc(S.authMsg.text)}</div>`:''}
+  <div class="card"><form class="f" id="recForm" style="margin-top:0">${pwField('r_pw','Password baru','new-password','minimal 8 karakter')}${pwField('r_pw2','Ulangi password baru','new-password')}<button class="btn primary block" id="r_go">Simpan password</button></form></div></div>`;
+  $('#recForm').onsubmit=async e=>{e.preventDefault();const a=$('#r_pw').value,b=$('#r_pw2').value,btn=$('#r_go');
+    if(a.length<8){S.authMsg={text:'Password minimal 8 karakter.'};return render()}
+    if(a!==b){S.authMsg={text:'Kedua password tidak sama.'};return render()}
+    btn.disabled=true;
+    try{chk(await sb.auth.updateUser({password:a}));S.recovery=false;S.authMsg=null;history.replaceState(null,'',location.pathname);toast('Password baru tersimpan');const s=S.session;S.userId=null;handleSession(s)}
+    catch(err){S.authMsg={text:errText(err)};render()}};
+}
+
+function renderJoin(app){
+  const inv=store.get('pendingInvite')||'';
+  const joinCard=`<div class="card"><b>Diundang pasangan?</b><div class="sub">Masukkan kode undangan yang dikirim pasanganmu.</div>
+    <form class="f" id="joinForm"><label class="fld"><span>Kode undangan</span><input id="j_code" required maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(inv)}" placeholder="Contoh: K7MP3XQA" style="text-transform:uppercase;letter-spacing:.15em;font-weight:600"></label>
+    <button class="btn ${inv?'primary':''} block" id="j_go">Gabung ke planner</button></form></div>`;
+  const newCard=`<div class="card"><b>Mulai planner baru</b><div class="sub">Isi sekali saja. Setelah ini kamu bisa mengundang pasanganmu.</div>
+  <form class="f" id="setupForm">
+    <div class="two"><label class="fld"><span>Nama calon pria</span><input id="s_a" required maxlength="40" autocomplete="off"></label>
+    <label class="fld"><span>Nama calon wanita</span><input id="s_b" required maxlength="40" autocomplete="off"></label></div>
+    <label class="fld"><span>Tanggal akad <em>boleh dikosongkan dulu</em></span><input type="date" id="s_d"></label>
+    <div class="fld"><span>Rencana akad</span><div class="seg"><label><input type="radio" name="s_l" value="kua" checked>Di KUA, jam kerja</label><label><input type="radio" name="s_l" value="luar">Di luar KUA / jam kerja</label></div></div>
+    <div class="fld"><span>Saya adalah</span><div class="seg"><label><input type="radio" name="s_me" value="A" checked>Calon pria</label><label><input type="radio" name="s_me" value="B">Calon wanita</label></div></div>
+    <label class="row small"><input type="checkbox" id="s_k" checked> Buat kantong dana standar (Venue, Catering, Dekorasi, KUA…)</label>
+    <label class="row small"><input type="checkbox" id="s_t" checked> Isi daftar tugas persiapan per tahap</label>
+    <button class="btn ${inv?'':'primary'} block" id="s_go">Buat planner</button>
+  </form></div>`;
+  app.innerHTML=`<div class="gate"><div class="eyebrow">Planner Nikah</div><h1>Halo, ${esc(S.email.split('@')[0])}</h1><p class="lead">Akunmu belum terhubung ke planner mana pun.</p>
+  ${inv?joinCard+newCard:newCard+joinCard}
+  <div class="foot"><span>Masuk sebagai ${esc(S.email)}</span>·<button class="linkbtn" data-act="logout">Keluar</button></div></div>`;
+  $('#joinForm').onsubmit=async e=>{e.preventDefault();const code=$('#j_code').value.toUpperCase().replace(/[^A-Z0-9]/g,''),b=$('#j_go');if(!code)return;b.disabled=true;b.textContent='Menghubungkan…';
+    try{chk(await sb.rpc('accept_invite',{p_code:code}));store.set('pendingInvite',null);await loadMembership();toast('Kamu sudah terhubung dengan pasanganmu')}
+    catch(err){toast(errText(err));if(b.isConnected){b.disabled=false;b.textContent='Gabung ke planner'}}};
+  $('#setupForm').onsubmit=async e=>{e.preventDefault();const b=$('#s_go');b.disabled=true;b.textContent='Menyiapkan…';
+    const me=document.querySelector('[name=s_me]:checked').value,lok=document.querySelector('[name=s_l]:checked').value;
+    try{
+      const wid=chk(await sb.rpc('create_wedding',{p_data:{namaA:$('#s_a').value.trim(),namaB:$('#s_b').value.trim(),tanggal:$('#s_d').value||'',lokasi:lok,kondisi:{A:{},B:{},luarKec:false}},p_pihak:me}));
+      S.weddingId=wid;S.mePihak=me;
+      if($('#s_k').checked)await api.addMany('kantong',KANTONG_STD.map((n,u)=>({nama:n,estimasi:n==='KUA & Berkas'&&lok==='luar'?600000:0,urut:u,...meta()})));
+      if($('#s_t').checked){let u=0;const arr=[];for(const f of Object.keys(TUGAS_STD))for(const t of TUGAS_STD[f])arr.push({judul:t,fase:f,pj:'AB',selesai:false,urut:u++,...meta()});await api.addMany('tugas',arr)}
+      await loadMembership();toast('Planner siap. Sekarang undang pasanganmu.');
+    }catch(err){console.warn(err);toast(errText(err));if(String(err&&err.message).includes('ALREADY_MEMBER'))loadMembership();else if(b.isConnected){b.disabled=false;b.textContent='Buat planner'}}};
+}
+
+function renderApp(app){
+  const p=S.plan||{};
+  $('#tabs').innerHTML=TABS.map(([k,l,i])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}>${ico(i)}${l}</button>`).join('');
+  const noPartner=!partner();
+  let html=`<header class="top"><div class="grow"><div class="eyebrow">Planner Nikah</div><h1 class="couple">${esc(p.namaA||'Calon pria')} <i>&amp;</i> ${esc(p.namaB||'Calon wanita')}</h1></div><div class="row" style="gap:8px"><button class="iconbtn" data-act="help" aria-label="Cara pakai">${ico('help')}</button><button class="iconbtn" data-act="partner" aria-label="Pasangan">${ico('pair')}${noPartner?'<span class="badge"></span>':''}</button><button class="iconbtn" data-act="settings" aria-label="Pengaturan">${ico('gear')}</button></div></header>`;
+  html+=({beranda:vBeranda,vendor:vVendor,uang:vUang,tamu:vTamu,berkas:vBerkas,tugas:vPersiapan}[S.tab]||vBeranda)();
+  app.innerHTML=html;
+}
+
+function vBeranda(){
+  const p=S.plan,d=daysUntil(p.tanggal),m=money();
+  const bg=berkasGroups().filter(g=>g.key!=='S');const bAll=bg.flatMap(g=>g.items),bDone=bAll.filter(i=>isDone(i.key)).length;
+  const tDone=S.tugas.filter(t=>t.selesai).length;
+  const vDeal=S.vendors.filter(v=>v.status==='deal'||v.status==='lunas').length;
+  const tTot=S.tamu.reduce((a,x)=>a+orang(x),0),tHadir=S.tamu.filter(x=>x.rsvp==='hadir').reduce((a,x)=>a+orang(x),0);
+  const sDone=S.seserahan.filter(x=>x.dibeli).length;
+  let h='';
+  if(!partner()&&S.myRole==='owner')h+=`<div class="banner row between wrap" style="margin-top:12px"><span>Undang pasanganmu supaya kalian bisa mengisi planner bareng.</span><button class="btn sm primary" data-act="partner">Undang pasangan</button></div>`;
+  else if(!store.get('helpSeen'))h+=`<div class="banner row between wrap" style="margin-top:12px"><span>Baru pertama kali? Lihat cara pakai planner ini.</span><button class="btn sm" data-act="help">Cara pakai</button></div>`;
+  h+=`<section class="count">`;
+  if(p.tanggal){
+    h+= d>0?`<b class="num">${d}</b><div><small>hari menuju akad</small><strong>${esc(fmtDate(p.tanggal,1))}</strong></div>`
+      : d===0?`<div><strong style="font-family:var(--f-display);font-size:30px;font-weight:400">Hari ini hari akadnya.</strong><small>${esc(fmtDate(p.tanggal,1))}</small></div>`
+      :`<div><strong style="font-family:var(--f-display);font-size:28px;font-weight:400">Sudah sah ${-d} hari</strong><small>${esc(fmtDate(p.tanggal,1))}</small></div>`;
+  }else h+=`<div><strong>Tanggal akad belum ditentukan</strong><small><button class="btn sm" data-act="settings" style="margin-top:6px">Atur tanggal</button></small></div>`;
+  h+=`</section><p class="sub" style="margin:8px 0 0">${p.lokasi==='luar'?'Akad di luar KUA / di luar jam kerja':'Akad di KUA pada jam kerja'}</p>`;
+  h+=`<div class="sechead"><h2 class="sec">Progres</h2></div><div class="list">
+    ${kpi('Dana terkumpul',`${rp(m.masuk)} <span class="muted small">/ ${rp(m.estimasi)}</span>`,pct(m.masuk,m.estimasi),'uang')}
+    ${kpi('Berkas nikah',`${bDone} <span class="muted small">/ ${bAll.length}</span>`,pct(bDone,bAll.length),'berkas')}
+    ${kpi('Tugas persiapan',`${tDone} <span class="muted small">/ ${S.tugas.length}</span>`,pct(tDone,S.tugas.length),'tugas')}
+    ${kpi('Vendor deal',`${vDeal} <span class="muted small">dari ${S.vendors.length} dicatat</span>`,pct(vDeal,S.vendors.length),'vendor')}
+    ${kpi('Tamu konfirmasi hadir',`${tHadir} <span class="muted small">/ ${tTot} orang</span>`,pct(tHadir,tTot),'tamu')}
+    ${kpi('Seserahan & mahar siap',`${sDone} <span class="muted small">/ ${S.seserahan.length}</span>`,pct(sDone,S.seserahan.length),'tugas')}
+  </div>`;
+  h+=`<div class="sechead"><h2 class="sec">Nabung bareng</h2><button class="btn sm" data-act="trx" data-tipe="masuk">${ico('plus',2)}Setor</button></div>`+nabungCard(m);
+  const next=S.tugas.filter(t=>!t.selesai).sort((a,b)=>FASE.indexOf(a.fase)-FASE.indexOf(b.fase)||(a.urut??0)-(b.urut??0)).slice(0,4);
+  if(next.length)h+=`<div class="sechead"><h2 class="sec">Berikutnya</h2><button class="btn sm ghost" data-tab="tugas">Semua tugas</button></div><div class="list">${next.map(taskRow).join('')}</div>`;
+  const feed=[...S.trx.map(t=>({x:t,ts:t.dibuat||0,txt:trxText(t)})),...S.vendors.map(v=>({x:v,ts:v.dibuat||0,txt:`menambahkan vendor <b>${esc(v.nama)}</b>`}))].sort((a,b)=>b.ts-a.ts).slice(0,5);
+  h+=`<div class="sechead"><h2 class="sec">Aktivitas terbaru</h2></div>`;
+  h+=feed.length?`<div class="list">${feed.map(f=>{const who=siapa(f.x),ph=pihakOf(f.x);return `<div class="feed"><span class="av ${esc(ph)}" aria-hidden="true">${esc((who==='Kamu'?namaPihak(S.mePihak):who).charAt(0).toUpperCase())}</span><div class="grow small"><b>${esc(who)}</b> ${f.txt}<div class="muted" style="font-size:12px">${f.ts?esc(new Date(f.ts).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})):''}</div></div></div>`}).join('')}</div>`
+    :`<div class="list"><div class="empty small" style="padding:20px">Setoran, pengeluaran, dan vendor baru dari kalian berdua akan muncul di sini.</div></div>`;
+  return h;
+}
+function kpi(l,v,pc,tab){return `<div class="kpi" role="button" tabindex="0" data-tab="${tab}" style="cursor:pointer"><span>${l}</span><span class="v num">${v}</span><div class="bar"><span style="width:${pc.toFixed(1)}%"></span></div></div>`}
+function nabungCard(m){
+  const p=S.plan,tot=m.per.A+m.per.B+m.per.C,d=daysUntil(p.tanggal),sisa=Math.max(0,m.estimasi-m.masuk);
+  const bln=d&&d>0?Math.max(1,Math.ceil(d/30.44)):null;
+  let target='';
+  if(m.estimasi<=0)target=`<p class="small muted" style="margin:12px 0 0">Isi estimasi di tiap kantong (menu Keuangan) supaya target nabung per bulan bisa dihitung.</p>`;
+  else if(sisa<=0)target=`<p class="small" style="margin:12px 0 0;color:var(--ok)">Dana sudah memenuhi total estimasi.</p>`;
+  else if(bln)target=`<div class="cols3" style="margin-top:14px"><div><div class="lbl">Kurang</div><div class="val num">${rp(sisa)}</div></div><div><div class="lbl">Per bulan berdua</div><div class="val num">${rp(sisa/bln)}</div></div><div><div class="lbl">Per orang / bulan</div><div class="val num">${rp(sisa/bln/2)}</div></div></div><p class="small muted" style="margin:8px 0 0">Dihitung dari sisa ${bln} bulan sampai hari akad.</p>`;
+  else target=`<p class="small muted" style="margin:12px 0 0">Masih kurang ${rp(sisa)}. Atur tanggal akad untuk melihat target per bulan.</p>`;
+  return `<div class="card"><div class="split" aria-hidden="true">${tot?['A','B','C'].map(k=>m.per[k]?`<span style="width:${pct(m.per[k],tot)}%;background:var(--${k==='C'?'accent':'p'+k})"></span>`:'').join(''):''}</div>
+  <div class="row wrap" style="gap:16px;margin-top:10px">${['A','B','C'].map(k=>`<div class="row small" style="gap:6px"><span class="dot" style="background:var(--${k==='C'?'accent':'p'+k})"></span>${esc(namaPihak(k))} <b class="num">${rp(m.per[k])}</b></div>`).join('')}</div>${target}</div>`;
+}
+function trxText(t){
+  const k=S.kantong.find(x=>x.id===t.kantong);const kn=k?k.nama:'Belum dialokasikan';
+  if(t.tipe==='masuk')return `menyetor <b class="num">${rp(t.jumlah)}</b> ke ${esc(kn)}`;
+  if(t.tipe==='pindah'){const f=S.kantong.find(x=>x.id===t.dari);return `memindahkan <b class="num">${rp(t.jumlah)}</b> dari ${esc(f?f.nama:'Belum dialokasikan')} ke ${esc(kn)}`}
+  const v=S.vendors.find(x=>x.id===t.vendor);return `mencatat pengeluaran <b class="num">${rp(t.jumlah)}</b>${v?' untuk '+esc(v.nama):''} · ${esc(kn)}`;
+}
+
+/* Vendor */
+function vVendor(){
+  let h=`<div class="sechead"><h2 class="sec">Vendor</h2><button class="btn primary sm" data-act="vendor">${ico('plus',2)}Tambah vendor</button></div>`;
+  if(!S.vendors.length)return h+`<div class="list"><div class="empty"><p>Catat vendor incaran beserta Instagram dan nomor WhatsApp-nya. Vendor dengan kategori sama akan berjejer, jadi mudah dibandingkan.</p><button class="btn primary" data-act="vendor">${ico('plus',2)}Tambah vendor pertama</button></div></div>`;
+  const cnt=k=>S.vendors.filter(v=>(v.status||'incaran')===k).length;
+  h+=`<div class="chips" role="group" aria-label="Saring status">${[['semua','Semua',S.vendors.length],...STATUS.map(([k,l])=>[k,l,cnt(k)])].map(([k,l,c])=>`<button class="chip" data-act="vf" data-v="${k}" aria-pressed="${S.vendorFilter===k}">${l} ${c}</button>`).join('')}</div>`;
+  const list=S.vendors.filter(v=>S.vendorFilter==='semua'||(v.status||'incaran')===S.vendorFilter);
+  const cats=[...KATEGORI,...new Set(list.map(v=>v.kategori).filter(c=>!KATEGORI.includes(c)))];
+  for(const c of cats){const vs=list.filter(v=>(v.kategori||'Lainnya')===c);if(!vs.length)continue;
+    h+=`<div class="vcat">${esc(c)} · ${vs.length}</div><div class="stack">${vs.map(vendorCard).join('')}</div>`}
+  if(!list.length)h+=`<div class="empty">Belum ada vendor dengan status ini.</div>`;
+  return h;
+}
+function vendorCard(v){
+  const paid=vendorPaid(v.id),harga=+v.harga||0,st=v.status||'incaran',stl=(STATUS.find(s=>s[0]===st)||STATUS[0])[1];
+  const k=S.kantong.find(x=>x.id===v.kantong);
+  const wa=waLink(v.wa,`Halo kak, saya ${S.mePihak?namaPihak(S.mePihak):''} mau tanya paket ${v.kategori||''}${S.plan.tanggal?' untuk tanggal '+fmtDate(S.plan.tanggal,1):''}.`.replace(/\s+/g,' '));
+  const ig=igLink(v.ig),lk=safeUrl(v.link);
+  return `<article class="card vcard"><div class="row between" style="align-items:flex-start"><div class="grow"><button class="name" data-act="vendor" data-id="${esc(v.id)}">${esc(v.nama)}</button>${k?`<div class="sub">Kantong ${esc(k.nama)}</div>`:''}</div><span class="pill st-${esc(st)}">${stl}</span></div>
+  <div class="vmeta"><div><div class="lbl">Harga</div><div class="val num">${harga?rp(harga):'—'}</div></div><div><div class="lbl">Terbayar</div><div class="val num">${rp(paid)}</div></div><div><div class="lbl">Sisa</div><div class="val num">${harga?rp(Math.max(0,harga-paid)):'—'}</div></div></div>
+  ${harga?`<div class="bar"><span style="width:${pct(paid,harga)}%;background:var(--ok)"></span></div>`:''}
+  ${v.catatan?`<div class="vnote">${esc(v.catatan)}</div>`:''}
+  <div class="btnrow" style="margin-top:12px">${wa?`<a class="btn sm" href="${esc(wa)}" target="_blank" rel="noopener">${ico('wa')}WhatsApp</a>`:''}${ig?`<a class="btn sm" href="${esc(ig)}" target="_blank" rel="noopener">${ico('ig')}${esc(igHandle(v.ig))}</a>`:''}${lk?`<a class="btn sm" href="${esc(lk)}" target="_blank" rel="noopener">${ico('link')}Tautan</a>`:''}<button class="btn sm" data-act="trx" data-tipe="keluar" data-vendor="${esc(v.id)}">Catat bayar</button></div>
+  ${v.wa?`<div class="sub" style="margin-top:8px">WA <span class="num" style="user-select:all">${esc(v.wa)}</span></div>`:''}</article>`;
+}
+
+/* Keuangan */
+function vUang(){
+  const m=money();
+  let h=`<div class="sechead"><h2 class="sec">Keuangan</h2></div><div class="card">
+   <div class="lbl">Terkumpul dari total estimasi</div><div class="big num">${rp(m.masuk)}</div><div class="sub num">dari ${rp(m.estimasi)} · ${pct(m.masuk,m.estimasi).toFixed(0)}%</div>
+   <div class="bar" style="margin:12px 0 14px"><span style="width:${pct(m.masuk,m.estimasi)}%"></span></div>
+   <div class="cols3"><div><div class="lbl">Terpakai</div><div class="val num">${rp(m.keluar)}</div></div><div><div class="lbl">Saldo</div><div class="val num">${rp(m.saldo)}</div></div><div><div class="lbl">Kurang</div><div class="val num">${rp(Math.max(0,m.estimasi-m.masuk))}</div></div></div>
+   <div class="btnrow" style="margin-top:16px"><button class="btn primary sm" data-act="trx" data-tipe="masuk">${ico('plus',2)}Setor</button><button class="btn sm" data-act="trx" data-tipe="keluar">Catat pengeluaran</button><button class="btn sm" data-act="trx" data-tipe="pindah">Pindah dana</button></div></div>`;
+  h+=`<div class="sechead"><h2 class="sec">Kontribusi</h2></div>`+nabungCard(m);
+  h+=`<div class="sechead"><h2 class="sec">Kantong</h2><button class="btn sm" data-act="kantong">${ico('plus',2)}Kantong</button></div>`;
+  const ks=kantongSorted();
+  if(!ks.length&&!m.umum)h+=`<div class="list"><div class="empty"><p>Kantong memisahkan dana per kebutuhan: dekor, catering, KUA, dan lainnya.</p><button class="btn primary" data-act="kantongStd">Buat kantong standar</button></div></div>`;
+  else{
+    h+=`<div class="list">`;
+    if(m.umum)h+=`<div><div class="row between"><b>Belum dialokasikan</b><span class="amt num">${rp(m.umum)}</span></div><div class="sub">Setoran yang belum dimasukkan ke kantong mana pun. Pakai "Pindah dana" untuk membaginya.</div></div>`;
+    for(const k0 of ks){const k=m.k[k0.id],est=+k.estimasi||0,sal=k.masuk-k.keluar;
+      h+=`<div class="kant" role="button" tabindex="0" data-act="kantong" data-id="${esc(k.id)}"><div class="row between"><b class="grow">${esc(k.nama)}</b><span class="amt num">${rp(sal)}</span></div>
+      <div class="bar" style="margin:8px 0 6px"><span style="width:${pct(k.masuk,est)}%"></span></div>
+      <div class="row between sub num"><span>Terisi ${rp(k.masuk)}${est?' dari '+rp(est):' · estimasi belum diisi'}</span><span>Terpakai ${rp(k.keluar)}</span></div></div>`}
+    h+=`</div>`;
+  }
+  const tx=[...S.trx].sort((a,b)=>String(b.tanggal).localeCompare(String(a.tanggal))||(b.dibuat||0)-(a.dibuat||0));
+  h+=`<div class="sechead"><h2 class="sec">Riwayat</h2><span class="sub">${tx.length} catatan</span></div>`;
+  h+=tx.length?`<div class="list">${tx.slice(0,60).map(t=>{const k=S.kantong.find(x=>x.id===t.kantong),v=S.vendors.find(x=>x.id===t.vendor);
+    const title=t.tipe==='masuk'?'Setoran':t.tipe==='pindah'?'Pindah dana':(v?v.nama:'Pengeluaran');
+    const pk=t.tipe==='masuk'?`<span class="pill ${esc(t.pihak||'C')}">${esc(namaPihak(t.pihak||'C'))}</span>`:'';
+    return `<div class="kant" role="button" tabindex="0" data-act="trx" data-id="${esc(t.id)}"><div class="row between"><span class="grow"><b>${esc(title)}</b> ${pk}</span><span class="amt num ${t.tipe==='masuk'?'in':t.tipe==='keluar'?'out':''}">${t.tipe==='keluar'?'−':t.tipe==='masuk'?'+':''}${rp(t.jumlah)}</span></div><div class="sub">${esc(fmtDate(t.tanggal))} · ${esc(k?k.nama:'Belum dialokasikan')} · dicatat ${esc(siapa(t))}${t.catatan?' · '+esc(t.catatan):''}</div></div>`}).join('')}</div>`
+    :`<div class="list"><div class="empty small" style="padding:20px">Belum ada catatan. Mulai dengan setoran pertama kalian.</div></div>`;
+  return h;
+}
+
+/* Berkas */
+function vBerkas(){
+  const p=S.plan,kd=p.kondisi||{},gs=berkasGroups();
+  const all=gs.filter(g=>g.key!=='S').flatMap(g=>g.items),done=all.filter(i=>isDone(i.key)).length;
+  let h=`<div class="sechead"><h2 class="sec">Berkas nikah</h2><span class="sub num">${done}/${all.length} siap</span></div><div class="bar"><span style="width:${pct(done,all.length)}%"></span></div>`;
+  h+=`<div class="card" style="margin-top:14px"><b>Sesuaikan dengan kondisi kalian</b><div class="sub">Berkas tambahan akan muncul otomatis.</div>`;
+  for(const s of ['A','B'])h+=`<div style="margin-top:12px"><div class="small"><span class="dot" style="background:var(--p${s})"></span> ${esc(namaPihak(s))}</div><div class="flags">${KONDISI.map(c=>`<button class="chip" data-act="flag" data-s="${s}" data-f="${c.f}" aria-pressed="${!!kd[s]?.[c.f]}">${c.l}</button>`).join('')}</div></div>`;
+  h+=`<div style="margin-top:12px"><div class="small">Lokasi</div><div class="flags"><button class="chip" data-act="flag" data-s="" data-f="luarKec" aria-pressed="${!!kd.luarKec}">Akad di luar kecamatan domisili</button><button class="chip" data-act="lokasi" aria-pressed="${p.lokasi==='luar'}">Akad di luar KUA / jam kerja</button></div></div></div>`;
+  for(const g of gs){const d=g.items.filter(i=>isDone(i.key)).length;
+    h+=`<div class="ghead"><h3>${esc(g.title)}${g.who?` <span class="muted" style="font-weight:400">· ${esc(g.who)}</span>`:''}</h3><span class="sub num">${d}/${g.items.length}</span></div><div class="list">${g.items.map(i=>{const st=S.berkas?.items?.[i.key];const by=st&&st.done&&st.byPihak?` · dicentang ${esc(st.by===S.userId?'kamu':namaPihak(st.byPihak))}`:'';
+      return `<label class="chk ${isDone(i.key)?'done':''}"><input type="checkbox" data-act="berkas" data-k="${esc(i.key)}" ${isDone(i.key)?'checked':''}><div class="grow"><div class="t">${esc(i.t)}</div>${i.k||by?`<div class="k">${esc(i.k||'')}${by}</div>`:''}</div>${i.custom?`<button class="btn sm ghost" data-act="delBerkas" data-id="${esc(i.id)}" aria-label="Hapus">Hapus</button>`:''}</label>`}).join('')}</div>`}
+  h+=`<div style="margin-top:14px"><button class="btn sm" data-act="addBerkas">${ico('plus',2)}Tambah berkas yang diminta KUA kalian</button></div>`;
+  h+=`<p class="note">Daftar ini dirangkum dari panduan Bimas Islam Kemenag dan liputan syarat nikah 2025–2026. Tiap KUA bisa meminta sedikit berbeda, jadi cocokkan dengan KUA tujuan saat pemeriksaan. Untuk pasangan non-Muslim, pencatatan dilakukan di Disdukcapil.</p>`;
+  return h;
+}
+
+/* Persiapan */
+function taskRow(t){
+  return `<div class="chk ${t.selesai?'done':''}"><input type="checkbox" data-act="task" data-id="${esc(t.id)}" ${t.selesai?'checked':''} aria-label="Tandai selesai"><div class="grow"><div class="t" data-act="taskEdit" data-id="${esc(t.id)}" role="button" tabindex="0" style="cursor:pointer">${esc(t.judul)}</div>${t.tenggat?`<div class="k">Tenggat ${esc(fmtDate(t.tenggat))}</div>`:''}</div><button class="pill ${esc(t.pj||'AB')}" data-act="pj" data-id="${esc(t.id)}" title="Ganti penanggung jawab">${esc(namaPihak(t.pj||'AB'))}</button></div>`;
+}
+function vPersiapan(){
+  return `<div class="seg" style="margin-top:18px">${[['tugas','Tugas'],['ses','Seserahan & mahar']].map(([k,l])=>`<label><input type="radio" name="prep" data-act="prep" value="${k}" ${S.prepView===k?'checked':''}>${l}</label>`).join('')}</div>`+(S.prepView==='ses'?vSeserahan():vTugas());
+}
+function vTugas(){
+  const done=S.tugas.filter(t=>t.selesai).length;
+  let h=`<div class="sechead"><h2 class="sec">Tugas persiapan</h2><button class="btn primary sm" data-act="taskEdit">${ico('plus',2)}Tugas</button></div>`;
+  if(!S.tugas.length)return h+`<div class="list"><div class="empty"><p>Daftar tugas dibagi per tahap, dari 12 bulan sebelum sampai setelah hari H.</p><button class="btn primary" data-act="tugasStd">Isi daftar tugas standar</button></div></div>`;
+  h+=`<div class="row" style="margin-bottom:12px"><div class="bar grow"><span style="width:${pct(done,S.tugas.length)}%"></span></div><span class="sub num">${done}/${S.tugas.length}</span></div>`;
+  const F=[['semua','Semua'],['belum','Belum selesai'],['A',namaPihak('A')],['B',namaPihak('B')]];
+  h+=`<div class="chips">${F.map(([k,l])=>`<button class="chip" data-act="tf" data-v="${esc(k)}" aria-pressed="${S.taskFilter===k}">${esc(l)}</button>`).join('')}</div>`;
+  const f=S.taskFilter,list=S.tugas.filter(t=>f==='semua'||(f==='belum'?!t.selesai:(t.pj===f||t.pj==='AB')));
+  for(const fs of FASE){const ts=list.filter(t=>(FASE.includes(t.fase)?t.fase:'Lainnya')===fs).sort((a,b)=>(a.urut??999)-(b.urut??999)||(a.dibuat||0)-(b.dibuat||0));if(!ts.length)continue;
+    h+=`<div class="ghead"><h3>${esc(fs)}</h3><span class="sub num">${ts.filter(t=>t.selesai).length}/${ts.length}</span></div><div class="list">${ts.map(taskRow).join('')}</div>`}
+  if(!list.length)h+=`<div class="empty">Tidak ada tugas untuk saringan ini.</div>`;
+  return h;
+}
+function vSeserahan(){
+  const all=S.seserahan,done=all.filter(x=>x.dibeli).length,est=all.reduce((a,x)=>a+(+x.harga||0),0),beli=all.filter(x=>x.dibeli).reduce((a,x)=>a+(+x.harga||0),0);
+  let h=`<div class="sechead"><h2 class="sec">Seserahan & mahar</h2><button class="btn primary sm" data-act="sesEdit">${ico('plus',2)}Item</button></div>`;
+  if(!all.length)return h+`<div class="list"><div class="empty"><p>Catat isi mahar dan seserahan, perkiraan harganya, dan tandai yang sudah dibeli.</p><button class="btn primary" data-act="sesStd">Isi daftar seserahan umum</button></div></div>`;
+  const kMahar=S.kantong.find(k=>/mahar|seserahan/i.test(k.nama));
+  h+=`<div class="card"><div class="cols3"><div><div class="lbl">Sudah dibeli</div><div class="val num">${done}/${all.length}</div></div><div><div class="lbl">Estimasi total</div><div class="val num">${rp(est)}</div></div><div><div class="lbl">Nilai terbeli</div><div class="val num">${rp(beli)}</div></div></div>
+  <div class="bar" style="margin-top:12px"><span style="width:${pct(done,all.length)}%"></span></div>
+  ${kMahar&&est?`<div class="row between wrap" style="margin-top:12px"><span class="sub">Estimasi kantong ${esc(kMahar.nama)}: ${rp(kMahar.estimasi)}</span>${+kMahar.estimasi!==est?`<button class="btn sm" data-act="sesEstimasi" data-id="${esc(kMahar.id)}">Samakan dengan ${rp(est)}</button>`:''}</div>`:''}</div>`;
+  for(const [j,l] of [['mahar','Mahar'],['seserahan','Seserahan']]){
+    const its=all.filter(x=>(x.jenis||'seserahan')===j).sort((a,b)=>(a.urut??999)-(b.urut??999)||(a.dibuat||0)-(b.dibuat||0));if(!its.length)continue;
+    h+=`<div class="ghead"><h3>${l}</h3><span class="sub num">${its.filter(x=>x.dibeli).length}/${its.length}</span></div><div class="list">${its.map(x=>`<div class="chk ${x.dibeli?'done':''}"><input type="checkbox" data-act="ses" data-id="${esc(x.id)}" ${x.dibeli?'checked':''} aria-label="Tandai sudah dibeli"><div class="grow"><div class="t" role="button" tabindex="0" data-act="sesEdit" data-id="${esc(x.id)}" style="cursor:pointer">${esc(x.nama)}</div>${+x.harga||x.catatan?`<div class="k">${+x.harga?`<span class="num">${rp(x.harga)}</span>`:''}${+x.harga&&x.catatan?' · ':''}${esc(x.catatan||'')}</div>`:''}</div><span class="pill ${esc(x.pj||'AB')}">${esc(namaPihak(x.pj||'AB'))}</span></div>`).join('')}</div>`;
+  }
+  return h;
+}
+
+/* Tamu */
+const orang=x=>Math.max(1,+x.jumlah||1);
+const pihakTamu=p=>p==='A'?'Pihak '+(S.plan?.namaA||'pria'):p==='B'?'Pihak '+(S.plan?.namaB||'wanita'):'Teman bersama';
+function undanganText(x){
+  const p=S.plan||{};
+  return String(p.tplUndangan||TPL_UNDANGAN).replace(/\{nama\}/g,x.nama||'').replace(/\{pria\}/g,p.namaA||'').replace(/\{wanita\}/g,p.namaB||'').replace(/\{tanggal\}/g,p.tanggal?fmtDate(p.tanggal,1):'tanggal yang akan kami kabarkan');
+}
+function vTamu(){
+  const p=S.plan,all=S.tamu,sum=a=>a.reduce((s,x)=>s+orang(x),0);
+  let h=`<div class="sechead"><h2 class="sec">Tamu undangan</h2><button class="btn primary sm" data-act="tamuAdd">${ico('plus',2)}Tambah tamu</button></div>`;
+  if(!all.length)return h+`<div class="list"><div class="empty"><p>Masukkan banyak nama sekaligus, satu nama per baris. Setelah itu kirim undangan lewat WhatsApp dan catat siapa yang hadir.</p><button class="btn primary" data-act="tamuAdd">${ico('plus',2)}Tambah tamu pertama</button></div></div>`;
+  const tot=sum(all),kuota=+p.kuotaTamu||0,sent=all.filter(x=>x.terkirim).length;
+  const per={A:sum(all.filter(x=>x.pihak==='A')),B:sum(all.filter(x=>x.pihak==='B')),AB:sum(all.filter(x=>x.pihak!=='A'&&x.pihak!=='B'))};
+  const col={A:'var(--pA)',B:'var(--pB)',AB:'var(--accent)'};
+  h+=`<div class="card"><div class="row between wrap" style="align-items:flex-end"><div><div class="lbl">Total diundang</div><div class="big num">${tot} <span class="sub" style="font-family:var(--f-body)">orang · ${all.length} undangan</span></div></div>
+    ${kuota?`<div class="sub num" style="text-align:right">Kuota ${kuota} orang<br>${tot>kuota?`<span style="color:var(--danger)">Lebih ${tot-kuota} orang</span>`:`Sisa ${kuota-tot} orang`}</div>`:`<button class="btn sm" data-act="settings">Atur kuota tamu</button>`}</div>
+    ${kuota?`<div class="bar" style="margin-top:10px"><span style="width:${pct(tot,kuota)}%;${tot>kuota?'background:var(--danger)':''}"></span></div>`:''}
+    <div class="split" style="margin-top:14px" aria-hidden="true">${['A','B','AB'].map(k=>per[k]?`<span style="width:${pct(per[k],tot)}%;background:${col[k]}"></span>`:'').join('')}</div>
+    <div class="row wrap small" style="gap:14px;margin-top:8px">${['A','B','AB'].map(k=>`<span class="row" style="gap:6px"><span class="dot" style="background:${col[k]}"></span>${esc(pihakTamu(k))} <b class="num">${per[k]}</b></span>`).join('')}</div>
+    <div class="cols3" style="margin-top:14px"><div><div class="lbl">Hadir</div><div class="val num" style="color:var(--ok)">${sum(all.filter(x=>x.rsvp==='hadir'))}</div></div><div><div class="lbl">Tidak hadir</div><div class="val num">${sum(all.filter(x=>x.rsvp==='tidak'))}</div></div><div><div class="lbl">Undangan terkirim</div><div class="val num">${sent}/${all.length}</div></div></div>
+    <div class="btnrow" style="margin-top:14px"><button class="btn sm" data-act="tplUndangan">${ico('wa')}Atur pesan undangan</button></div></div>`;
+  const F=[['semua','Semua'],['A',pihakTamu('A')],['B',pihakTamu('B')],['AB','Bersama'],['belumKirim','Belum dikirim'],['belumJawab','Belum jawab'],['hadir','Hadir']];
+  h+=`<input id="tamuQ" class="search" type="search" placeholder="Cari nama atau grup" value="${esc(S.tamuQ)}" autocomplete="off">`;
+  h+=`<div class="chips">${F.map(([k,l])=>`<button class="chip" data-act="tamuF" data-v="${esc(k)}" aria-pressed="${S.tamuFilter===k}">${esc(l)}</button>`).join('')}</div>`;
+  const q=S.tamuQ.trim().toLowerCase(),f=S.tamuFilter;
+  const list=all.filter(x=>{
+    if(q&&!(String(x.nama).toLowerCase().includes(q)||String(x.grup||'').toLowerCase().includes(q)))return false;
+    if(f==='A'||f==='B')return x.pihak===f; if(f==='AB')return x.pihak!=='A'&&x.pihak!=='B';
+    if(f==='belumKirim')return !x.terkirim; if(f==='belumJawab')return !x.rsvp||x.rsvp==='belum'; if(f==='hadir')return x.rsvp==='hadir';
+    return true});
+  const grups=[...new Set(list.map(x=>x.grup||'Tanpa grup'))].sort((a,b)=>a==='Tanpa grup'?1:b==='Tanpa grup'?-1:a.localeCompare(b));
+  for(const g of grups){const xs=list.filter(x=>(x.grup||'Tanpa grup')===g).sort((a,b)=>String(a.nama).localeCompare(b.nama));
+    h+=`<div class="ghead"><h3>${esc(g)}</h3><span class="sub num">${sum(xs)} orang</span></div><div class="list">${xs.map(tamuRow).join('')}</div>`}
+  if(!list.length)h+=`<div class="empty">Tidak ada tamu yang cocok.</div>`;
+  return h;
+}
+function tamuRow(x){
+  const r=x.rsvp||'belum',rl={belum:'Belum jawab',hadir:'Hadir',tidak:'Tidak hadir'}[r]||'Belum jawab',wa=waLink(x.wa,undanganText(x));
+  return `<div class="trow"><button class="tname" data-act="tamu" data-id="${esc(x.id)}"><b>${esc(x.nama)}</b><span class="sub">${esc(pihakTamu(x.pihak))}${orang(x)>1?' · '+orang(x)+' orang':''}${x.terkirim?' · undangan terkirim':''}</span></button>${wa?`<a class="iconbtn sm" href="${esc(wa)}" target="_blank" rel="noopener" data-act="waUndang" data-id="${esc(x.id)}" aria-label="Kirim undangan lewat WhatsApp">${ico('wa')}</a>`:''}<button class="pill rs-${esc(r)}" data-act="rsvp" data-id="${esc(x.id)}" title="Ketuk untuk ganti">${rl}</button></div>`;
+}
+
+/* ---------- Sheet & form ---------- */
+let lastFocus=null;
+function openSheet(title,body,mount){lastFocus=document.activeElement;$('#sheetTitle').textContent=title;$('#sheetBody').innerHTML=body;$('#scrim').hidden=false;$('#sheet').hidden=false;$('#sheet').scrollTop=0;mount&&mount($('#sheetBody'));const f=$('#sheetBody input:not([type=radio]):not([type=checkbox]),#sheetBody select');if(f&&window.innerWidth>760)f.focus()}
+function closeSheet(){$('#scrim').hidden=true;$('#sheet').hidden=true;$('#sheetBody').innerHTML='';lastFocus&&lastFocus.isConnected&&lastFocus.focus&&lastFocus.focus()}
+$('#scrim').onclick=closeSheet;$('#sheetClose').onclick=closeSheet;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
+function moneyInputs(root){root.querySelectorAll('[data-money]').forEach(i=>{i.addEventListener('blur',()=>{const n=parseRp(i.value);i.value=fmtInput(n)})})}
+function confirmDel(btn,fn,label){btn.onclick=async()=>{if(btn.dataset.armed){btn.disabled=true;if(await fn())closeSheet();else btn.disabled=false}else{btn.dataset.armed='1';btn.textContent=label||'Tap lagi untuk menghapus'}}}
+const opt=(v,l,sel)=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(l)}</option>`;
+const kantongOpts=(sel,none='Belum dialokasikan')=>opt('',none,sel||'')+kantongSorted().map(k=>opt(k.id,k.nama,sel)).join('');
+
+function sheetVendor(id){
+  const v=S.vendors.find(x=>x.id===id)||{};const isNew=!v.id;
+  const guessK=kat=>{const k=S.kantong.find(x=>x.nama.toLowerCase().includes(String(kat).split(/[ &/]/)[0].toLowerCase()));return k?k.id:''};
+  openSheet(isNew?'Vendor baru':'Ubah vendor',`<form class="f" id="vf">
+    <label class="fld"><span>Nama vendor</span><input id="v_n" required maxlength="80" value="${esc(v.nama)}" placeholder="Contoh: Sekar Catering"></label>
+    <div class="two"><label class="fld"><span>Kategori</span><select id="v_c">${KATEGORI.map(k=>opt(k,k,v.kategori||'Venue')).join('')}</select></label>
+    <label class="fld"><span>Status</span><select id="v_s">${STATUS.map(([k,l])=>opt(k,l,v.status||'incaran')).join('')}</select></label></div>
+    <div class="two"><label class="fld"><span>Instagram</span><input id="v_ig" maxlength="120" value="${esc(v.ig)}" placeholder="@namavendor" autocomplete="off"></label>
+    <label class="fld"><span>Nomor WhatsApp</span><input id="v_wa" inputmode="tel" maxlength="20" value="${esc(v.wa)}" placeholder="0812…"></label></div>
+    <div class="two"><label class="fld"><span>Harga / penawaran</span><input id="v_h" data-money inputmode="numeric" value="${fmtInput(v.harga)}" placeholder="15jt atau 15.000.000"></label>
+    <label class="fld"><span>Dibayar dari kantong</span><select id="v_k">${kantongOpts(isNew?guessK(v.kategori||'Venue'):v.kantong,'Tidak dihubungkan')}</select></label></div>
+    <label class="fld"><span>Tautan lain <em>website, TikTok, katalog</em></span><input id="v_l" maxlength="300" value="${esc(v.link)}" autocomplete="off"></label>
+    <label class="fld"><span>Catatan</span><textarea id="v_note" maxlength="1000" placeholder="Isi paket, jadwal survei, kesan">${esc(v.catatan)}</textarea></label>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="v_del">Hapus vendor</button>'}</div></form>`,
+  root=>{moneyInputs(root);
+    if(isNew)$('#v_c').onchange=e=>{const g=guessK(e.target.value);if(g)$('#v_k').value=g};
+    $('#vf').onsubmit=async e=>{e.preventDefault();
+      const d={nama:$('#v_n').value.trim(),kategori:$('#v_c').value,status:$('#v_s').value,ig:$('#v_ig').value.trim(),wa:$('#v_wa').value.trim(),harga:parseRp($('#v_h').value),kantong:$('#v_k').value,link:$('#v_l').value.trim(),catatan:$('#v_note').value.trim()};
+      if(await save(()=>isNew?api.add('vendors',{...d,...meta()}):api.update('vendors/'+v.id,d),'Vendor tersimpan'))closeSheet()};
+    if(!isNew)confirmDel($('#v_del'),()=>save(()=>api.del('vendors/'+v.id),'Vendor dihapus'));
+  });
+}
+
+function sheetTrx(id,preset={}){
+  const t=S.trx.find(x=>x.id===id)||{};const isNew=!t.id;
+  const tipe=t.tipe||preset.tipe||'masuk';
+  const pv=S.vendors.find(x=>x.id===(t.vendor||preset.vendor));
+  const kSel=t.kantong??(pv?pv.kantong:'');
+  openSheet(isNew?'Catat transaksi':'Ubah transaksi',`<form class="f" id="tf">
+    <div class="seg">${[['masuk','Setor'],['keluar','Pengeluaran'],['pindah','Pindah dana']].map(([k,l])=>`<label><input type="radio" name="t_tipe" value="${k}" ${k===tipe?'checked':''}>${l}</label>`).join('')}</div>
+    <div class="two"><label class="fld"><span>Jumlah</span><input id="t_j" data-money inputmode="numeric" required value="${fmtInput(t.jumlah)}" placeholder="500rb atau 2,5jt"></label>
+    <label class="fld"><span>Tanggal</span><input type="date" id="t_d" value="${esc(t.tanggal||todayISO())}" required></label></div>
+    <div class="fld" data-for="masuk"><span>Dari siapa</span><div class="seg">${['A','B','C'].map(k=>`<label><input type="radio" name="t_p" value="${k}" ${(t.pihak||S.mePihak||'A')===k?'checked':''}>${esc(k==='C'?'Bersama / keluarga':namaPihak(k))}</label>`).join('')}</div></div>
+    <label class="fld" data-for="pindah"><span>Dari kantong</span><select id="t_dari">${kantongOpts(t.dari||'')}</select></label>
+    <label class="fld"><span id="t_klbl">Kantong</span><select id="t_k">${kantongOpts(kSel)}</select></label>
+    <label class="fld" data-for="keluar"><span>Untuk vendor <em>opsional</em></span><select id="t_v">${opt('','Tidak ada',t.vendor||preset.vendor||'')+S.vendors.map(v=>opt(v.id,v.nama+' · '+(v.kategori||''),t.vendor||preset.vendor)).join('')}</select></label>
+    <label class="fld"><span>Catatan</span><input id="t_c" maxlength="200" value="${esc(t.catatan)}" placeholder="Contoh: DP catering, gaji Oktober"></label>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="t_del">Hapus</button>'}</div></form>`,
+  root=>{moneyInputs(root);
+    const sync=()=>{const tp=root.querySelector('[name=t_tipe]:checked').value;root.querySelectorAll('[data-for]').forEach(el=>el.hidden=el.dataset.for!==tp);$('#t_klbl').textContent=tp==='masuk'?'Masuk ke kantong':tp==='keluar'?'Diambil dari kantong':'Ke kantong'};
+    root.querySelectorAll('[name=t_tipe]').forEach(r=>r.onchange=sync);sync();
+    $('#t_v').onchange=e=>{const v=S.vendors.find(x=>x.id===e.target.value);if(v&&v.kantong)$('#t_k').value=v.kantong};
+    $('#tf').onsubmit=async e=>{e.preventDefault();const tp=root.querySelector('[name=t_tipe]:checked').value,j=parseRp($('#t_j').value);
+      if(j<=0){toast('Isi jumlah lebih dari nol');return}
+      if(tp==='pindah'&&$('#t_dari').value===$('#t_k').value){toast('Pilih kantong asal dan tujuan yang berbeda');return}
+      const d={tipe:tp,jumlah:j,tanggal:$('#t_d').value,kantong:$('#t_k').value,catatan:$('#t_c').value.trim(),pihak:tp==='masuk'?root.querySelector('[name=t_p]:checked').value:'',vendor:tp==='keluar'?$('#t_v').value:'',dari:tp==='pindah'?$('#t_dari').value:''};
+      if(await save(()=>isNew?api.add('transaksi',{...d,...meta()}):api.update('transaksi/'+t.id,d),'Tersimpan'))closeSheet()};
+    if(!isNew)confirmDel($('#t_del'),()=>save(()=>api.del('transaksi/'+t.id),'Transaksi dihapus'));
+  });
+}
+
+function sheetKantong(id){
+  const k=S.kantong.find(x=>x.id===id)||{};const isNew=!k.id;const m=money();const mk=m.k[k.id];
+  const vs=S.vendors.filter(v=>v.kantong===k.id);
+  openSheet(isNew?'Kantong baru':k.nama,`<form class="f" id="kf">
+    <label class="fld"><span>Nama kantong</span><input id="k_n" required maxlength="40" value="${esc(k.nama)}" placeholder="Contoh: Seserahan"></label>
+    <label class="fld"><span>Estimasi kebutuhan</span><input id="k_e" data-money inputmode="numeric" value="${fmtInput(k.estimasi)}" placeholder="25jt"></label>
+    ${mk?`<div class="cols3 small"><div><div class="lbl">Terisi</div><div class="val num">${rp(mk.masuk)}</div></div><div><div class="lbl">Terpakai</div><div class="val num">${rp(mk.keluar)}</div></div><div><div class="lbl">Saldo</div><div class="val num">${rp(mk.masuk-mk.keluar)}</div></div></div>`:''}
+    ${vs.length?`<div><div class="lbl" style="margin-bottom:6px">Vendor di kantong ini</div><div class="list">${vs.map(v=>`<div class="row between small"><span class="grow">${esc(v.nama)}</span><span class="num">${+v.harga?rp(v.harga):'—'}</span></div>`).join('')}</div></div>`:''}
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="k_del">Hapus kantong</button>'}</div>
+    ${isNew?'':'<p class="sub" style="margin:0">Jika dihapus, dana dan catatan di kantong ini pindah ke "Belum dialokasikan".</p>'}</form>`,
+  root=>{moneyInputs(root);
+    $('#kf').onsubmit=async e=>{e.preventDefault();const d={nama:$('#k_n').value.trim(),estimasi:parseRp($('#k_e').value)};
+      if(await save(()=>isNew?api.add('kantong',{...d,urut:S.kantong.length,...meta()}):api.update('kantong/'+k.id,d),'Kantong tersimpan'))closeSheet()};
+    if(!isNew)confirmDel($('#k_del'),()=>save(()=>api.del('kantong/'+k.id),'Kantong dihapus'));
+  });
+}
+
+function sheetTask(id){
+  const t=S.tugas.find(x=>x.id===id)||{};const isNew=!t.id;
+  openSheet(isNew?'Tugas baru':'Ubah tugas',`<form class="f" id="gf">
+    <label class="fld"><span>Tugas</span><input id="g_j" required maxlength="120" value="${esc(t.judul)}"></label>
+    <div class="two"><label class="fld"><span>Tahap</span><select id="g_f">${FASE.map(f=>opt(f,f,t.fase||'Lainnya')).join('')}</select></label>
+    <label class="fld"><span>Tenggat <em>opsional</em></span><input type="date" id="g_d" value="${esc(t.tenggat)}"></label></div>
+    <div class="fld"><span>Penanggung jawab</span><div class="seg">${['A','B','AB'].map(k=>`<label><input type="radio" name="g_p" value="${k}" ${(t.pj||'AB')===k?'checked':''}>${esc(namaPihak(k))}</label>`).join('')}</div></div>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="g_del">Hapus tugas</button>'}</div></form>`,
+  root=>{
+    $('#gf').onsubmit=async e=>{e.preventDefault();const d={judul:$('#g_j').value.trim(),fase:$('#g_f').value,tenggat:$('#g_d').value||'',pj:root.querySelector('[name=g_p]:checked').value};
+      if(await save(()=>isNew?api.add('tugas',{...d,selesai:false,urut:999,...meta()}):api.update('tugas/'+t.id,d),'Tugas tersimpan'))closeSheet()};
+    if(!isNew)confirmDel($('#g_del'),()=>save(()=>api.del('tugas/'+t.id),'Tugas dihapus'));
+  });
+}
+
+function sheetSettings(){
+  const p=S.plan;
+  openSheet('Pengaturan',`<form class="f" id="pf">
+    <div class="two"><label class="fld"><span>Nama calon pria</span><input id="p_a" required maxlength="40" value="${esc(p.namaA)}"></label>
+    <label class="fld"><span>Nama calon wanita</span><input id="p_b" required maxlength="40" value="${esc(p.namaB)}"></label></div>
+    <div class="two"><label class="fld"><span>Tanggal akad</span><input type="date" id="p_d" value="${esc(p.tanggal)}"></label>
+    <label class="fld"><span>Kuota tamu <em>orang</em></span><input id="p_q" type="number" inputmode="numeric" min="0" value="${+p.kuotaTamu||''}" placeholder="300"></label></div>
+    <div class="fld"><span>Rencana akad</span><div class="seg"><label><input type="radio" name="p_l" value="kua" ${p.lokasi!=='luar'?'checked':''}>Di KUA, jam kerja</label><label><input type="radio" name="p_l" value="luar" ${p.lokasi==='luar'?'checked':''}>Di luar KUA / jam kerja</label></div></div>
+    <button class="btn primary" type="submit" style="align-self:flex-start">Simpan</button></form>
+    <div class="ghead"><h3>Akun</h3></div>
+    <div class="list"><div class="row between wrap"><div class="grow"><div class="lbl">Masuk sebagai</div><div class="val" style="overflow-wrap:anywhere">${esc(S.email)}</div><div class="sub">${esc(namaPihak(S.mePihak))} · ${S.myRole==='owner'?'pembuat planner':'pasangan yang diundang'}</div></div></div>
+    <div class="row between wrap"><span>Pasangan</span><button class="btn sm" data-act="partner">${partner()?'Lihat':'Undang pasangan'}</button></div>
+    <div class="row between wrap"><span>Password</span><button class="btn sm" data-act="changePw">Ganti password</button></div>
+    <div class="row between wrap"><span>Keluar dari akun di perangkat ini</span><button class="btn sm danger" data-act="logout">Keluar</button></div></div>`,
+  root=>{$('#pf').onsubmit=async e=>{e.preventDefault();
+    if(await save(()=>api.update('plan/main',{namaA:$('#p_a').value.trim(),namaB:$('#p_b').value.trim(),tanggal:$('#p_d').value||'',kuotaTamu:Math.max(0,parseInt($('#p_q').value,10)||0),lokasi:root.querySelector('[name=p_l]:checked').value}),'Pengaturan tersimpan'))closeSheet()}});
+}
+
+function sheetChangePw(){
+  openSheet('Ganti password',`<form class="f" id="cpf">${pwField('c_pw','Password baru','new-password','minimal 8 karakter')}${pwField('c_pw2','Ulangi password baru','new-password')}<button class="btn primary" type="submit" style="align-self:flex-start">Simpan password</button></form>`,
+  ()=>{$('#cpf').onsubmit=async e=>{e.preventDefault();const a=$('#c_pw').value,b=$('#c_pw2').value;
+    if(a.length<8)return toast('Password minimal 8 karakter.');if(a!==b)return toast('Kedua password tidak sama.');
+    try{chk(await sb.auth.updateUser({password:a}));toast('Password baru tersimpan');closeSheet()}catch(err){toast(errText(err))}}});
+}
+
+function inviteLink(code){return BASE_URL+'?invite='+encodeURIComponent(code)}
+function inviteMsg(code){return `Halo! Yuk isi planner nikah kita bareng. Buka ${inviteLink(code)} lalu daftar pakai emailmu. Kalau diminta, kode undangannya: ${code}`}
+function sheetPartner(){
+  const pt=partner(),me=S.members.find(m=>m.user_id===S.userId);
+  let body='';
+  const personRow=(m,label)=>`<div class="person"><span class="av ${esc(m.pihak)}" aria-hidden="true">${esc(namaPihak(m.pihak).charAt(0).toUpperCase())}</span><div class="grow"><b>${esc(namaPihak(m.pihak))}</b> <span class="sub">${label}</span><div class="sub" style="overflow-wrap:anywhere">${esc(m.email||'')}</div></div></div>`;
+  body+=`<div class="list" style="margin-top:14px">${me?personRow(me,'· kamu'):''}${pt?personRow(pt,pt.role==='owner'?'· pembuat planner':'· pasangan'):`<div class="person"><span class="av" aria-hidden="true">?</span><div class="grow"><b>Belum ada pasangan</b><div class="sub">Satu planner hanya untuk dua akun.</div></div></div>`}</div>`;
+  if(pt){
+    body+=S.myRole==='owner'
+      ?`<p class="sub" style="margin:14px 0 8px">Melepas pasangan memutus akses akunnya ke planner ini. Datanya tetap aman, dan kamu bisa mengundang lagi.</p><button class="btn danger" id="pt_rm">Lepas pasangan</button>`
+      :`<p class="sub" style="margin:14px 0 8px">Kalau keluar, akunmu tidak bisa lagi melihat planner ini sampai diundang lagi.</p><button class="btn danger" id="pt_leave">Keluar dari planner</button>`;
+  }else if(S.myRole==='owner'){
+    const inv=S.invite;
+    if(inv){
+      body+=`<p class="small" style="margin:16px 0 8px">Kirim tautan atau kode ini ke pasanganmu. Kode hanya bisa dipakai sekali, berlaku sampai ${esc(fmtDate(inv.expires_at,1))}.</p>
+      <div class="code" aria-label="Kode undangan">${esc(inv.code)}</div>
+      <div class="linkbox" style="margin-top:10px">${esc(inviteLink(inv.code))}</div>
+      <div class="btnrow" style="margin-top:12px"><a class="btn primary" href="${esc('https://wa.me/?text='+encodeURIComponent(inviteMsg(inv.code)))}" target="_blank" rel="noopener">${ico('wa')}Kirim lewat WhatsApp</a><button class="btn" data-act="copyInvite">${ico('copy')}Salin tautan</button></div>
+      <p class="sub" style="margin:16px 0 6px">Kode bocor atau salah kirim? Buat kode baru, kode lama langsung tidak berlaku.</p><button class="btn sm" id="pt_new">Buat kode baru</button>`;
+    }else{
+      body+=`<ol class="small" style="margin:16px 0 14px;padding-left:18px;line-height:1.7"><li>Buat kode undangan.</li><li>Kirim tautannya ke pasanganmu lewat WhatsApp.</li><li>Pasangan daftar pakai emailnya sendiri, lalu otomatis terhubung.</li></ol><button class="btn primary" id="pt_new">Buat kode undangan</button>`;
+    }
+  }
+  openSheet('Pasangan',body,()=>{
+    const nb=$('#pt_new');if(nb)nb.onclick=async()=>{nb.disabled=true;try{const r=chk(await sb.rpc('create_invite'));S.invite=Array.isArray(r)?r[0]:r;sheetPartner()}catch(e){toast(errText(e));nb.disabled=false;if(String(e.message).includes('WEDDING_FULL'))onMembersChanged()}};
+    const rm=$('#pt_rm');if(rm)confirmDel(rm,async()=>{try{chk(await sb.rpc('remove_partner'));await fetchMembers();await fetchInvite();schedule();toast('Pasangan dilepas');return true}catch(e){toast(errText(e));return false}},'Tap lagi untuk melepas');
+    const lv=$('#pt_leave');if(lv)confirmDel(lv,async()=>{try{chk(await sb.rpc('leave_wedding'));teardown();S.weddingId=null;S.view='join';render();toast('Kamu sudah keluar dari planner');return true}catch(e){toast(errText(e));return false}},'Tap lagi untuk keluar');
+  });
+}
+
+const grupOpts=()=>[...new Set([...GRUP_STD,...S.tamu.map(x=>x.grup).filter(Boolean)])].map(g=>`<option value="${esc(g)}">`).join('');
+const pihakSeg=(name,sel)=>`<div class="seg">${['A','B','AB'].map(k=>`<label><input type="radio" name="${name}" value="${k}" ${(sel||'AB')===k?'checked':''}>${esc(k==='AB'?'Bersama':(k==='A'?S.plan.namaA:S.plan.namaB)||k)}</label>`).join('')}</div>`;
+
+function sheetTamuBulk(){
+  openSheet('Tambah tamu',`<form class="f" id="mf">
+    <label class="fld"><span>Nama tamu <em>satu per baris, nomor WA boleh ditulis setelah koma</em></span><textarea id="m_t" required rows="7" placeholder="Pak Budi Santoso, 0812 3456 7890&#10;Bu Rina&#10;Dimas & Sari, 0857 1111 2222"></textarea></label>
+    <div class="fld"><span>Dari pihak</span>${pihakSeg('m_p',S.mePihak||'AB')}</div>
+    <div class="two"><label class="fld"><span>Grup</span><input id="m_g" list="grupList" maxlength="40" placeholder="Teman kantor"></label>
+    <label class="fld"><span>Orang per undangan</span><input id="m_j" type="number" inputmode="numeric" min="1" max="20" value="1"></label></div>
+    <datalist id="grupList">${grupOpts()}</datalist>
+    <button class="btn primary" type="submit" id="m_go" style="align-self:flex-start">Tambahkan</button></form>`,
+  root=>{$('#mf').onsubmit=async e=>{e.preventDefault();
+    const lines=$('#m_t').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,500);if(!lines.length)return;
+    const pihak=root.querySelector('[name=m_p]:checked').value,grup=$('#m_g').value.trim(),jumlah=Math.max(1,parseInt($('#m_j').value,10)||1),b=$('#m_go');b.disabled=true;b.textContent='Menyimpan…';
+    const rows=lines.map(ln=>{const m=ln.match(/^(.*?)[,;]\s*(\+?[\d\s.\-]{8,})$/);return {nama:(m?m[1]:ln).trim(),wa:m?m[2].trim():'',pihak,grup,jumlah,rsvp:'belum',terkirim:false,catatan:'',...meta()}}).filter(r=>r.nama);
+    if(await save(()=>api.addMany('tamu',rows),rows.length+' tamu ditambahkan'))closeSheet();else{b.disabled=false;b.textContent='Tambahkan'}}});
+}
+function sheetTamu(id){
+  const x=S.tamu.find(t=>t.id===id);if(!x)return;
+  openSheet('Ubah tamu',`<form class="f" id="uf">
+    <label class="fld"><span>Nama</span><input id="u_n" required maxlength="80" value="${esc(x.nama)}"></label>
+    <div class="two"><label class="fld"><span>Nomor WhatsApp</span><input id="u_wa" inputmode="tel" maxlength="20" value="${esc(x.wa)}"></label>
+    <label class="fld"><span>Jumlah orang</span><input id="u_j" type="number" inputmode="numeric" min="1" max="20" value="${orang(x)}"></label></div>
+    <div class="fld"><span>Dari pihak</span>${pihakSeg('u_p',x.pihak)}</div>
+    <label class="fld"><span>Grup</span><input id="u_g" list="grupList2" maxlength="40" value="${esc(x.grup)}"></label><datalist id="grupList2">${grupOpts()}</datalist>
+    <div class="fld"><span>Kehadiran</span><div class="seg">${[['belum','Belum jawab'],['hadir','Hadir'],['tidak','Tidak hadir']].map(([k,l])=>`<label><input type="radio" name="u_r" value="${k}" ${(x.rsvp||'belum')===k?'checked':''}>${l}</label>`).join('')}</div></div>
+    <label class="row small"><input type="checkbox" id="u_s" ${x.terkirim?'checked':''}> Undangan sudah dikirim</label>
+    <label class="fld"><span>Catatan</span><input id="u_c" maxlength="200" value="${esc(x.catatan)}" placeholder="Contoh: undangan fisik, alamat rumah"></label>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button><button class="btn danger ghost" type="button" id="u_del">Hapus tamu</button></div></form>`,
+  root=>{$('#uf').onsubmit=async e=>{e.preventDefault();
+    const d={nama:$('#u_n').value.trim(),wa:$('#u_wa').value.trim(),jumlah:Math.max(1,parseInt($('#u_j').value,10)||1),pihak:root.querySelector('[name=u_p]:checked').value,grup:$('#u_g').value.trim(),rsvp:root.querySelector('[name=u_r]:checked').value,terkirim:$('#u_s').checked,catatan:$('#u_c').value.trim()};
+    if(await save(()=>api.update('tamu/'+x.id,d),'Tamu tersimpan'))closeSheet()};
+    confirmDel($('#u_del'),()=>save(()=>api.del('tamu/'+x.id),'Tamu dihapus'))});
+}
+function sheetTpl(){
+  openSheet('Pesan undangan WhatsApp',`<form class="f" id="wf">
+    <label class="fld"><span>Isi pesan</span><textarea id="w_t" rows="7" maxlength="1500">${esc(S.plan.tplUndangan||TPL_UNDANGAN)}</textarea></label>
+    <p class="sub" style="margin:0">Kata dalam kurung kurawal diganti otomatis: {nama} nama tamu, {pria} dan {wanita} nama kalian, {tanggal} tanggal akad. Tempel link undangan digital di sini kalau ada.</p>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button><button class="btn ghost" type="button" id="w_reset">Kembalikan bawaan</button></div></form>`,
+  ()=>{$('#w_reset').onclick=()=>{$('#w_t').value=TPL_UNDANGAN};
+    $('#wf').onsubmit=async e=>{e.preventDefault();if(await save(()=>api.update('plan/main',{tplUndangan:$('#w_t').value.trim()}),'Pesan undangan tersimpan'))closeSheet()}});
+}
+function sheetSes(id){
+  const x=S.seserahan.find(t=>t.id===id)||{};const isNew=!x.id;
+  openSheet(isNew?'Item baru':'Ubah item',`<form class="f" id="sf">
+    <label class="fld"><span>Nama item</span><input id="e_n" required maxlength="100" value="${esc(x.nama)}" placeholder="Contoh: Set skincare"></label>
+    <div class="fld"><span>Jenis</span><div class="seg">${[['mahar','Mahar'],['seserahan','Seserahan']].map(([k,l])=>`<label><input type="radio" name="e_j" value="${k}" ${(x.jenis||'seserahan')===k?'checked':''}>${l}</label>`).join('')}</div></div>
+    <label class="fld"><span>Perkiraan harga</span><input id="e_h" data-money inputmode="numeric" value="${fmtInput(x.harga)}" placeholder="350rb"></label>
+    <div class="fld"><span>Yang mengurus</span>${pihakSeg('e_p',x.pj)}</div>
+    <label class="fld"><span>Catatan</span><input id="e_c" maxlength="200" value="${esc(x.catatan)}" placeholder="Merek, ukuran, warna, link toko"></label>
+    <label class="row small"><input type="checkbox" id="e_b" ${x.dibeli?'checked':''}> Sudah dibeli</label>
+    <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="e_del">Hapus</button>'}</div></form>`,
+  root=>{moneyInputs(root);
+    $('#sf').onsubmit=async e=>{e.preventDefault();const d={nama:$('#e_n').value.trim(),jenis:root.querySelector('[name=e_j]:checked').value,harga:parseRp($('#e_h').value),pj:root.querySelector('[name=e_p]:checked').value,catatan:$('#e_c').value.trim(),dibeli:$('#e_b').checked};
+      if(await save(()=>isNew?api.add('seserahan',{...d,urut:999,...meta()}):api.update('seserahan/'+x.id,d),'Tersimpan'))closeSheet()};
+    if(!isNew)confirmDel($('#e_del'),()=>save(()=>api.del('seserahan/'+x.id),'Item dihapus'))});
+}
+function sheetAddBerkas(){
+  openSheet('Tambah berkas',`<form class="f" id="bf"><label class="fld"><span>Nama berkas</span><input id="b_t" required maxlength="120" placeholder="Contoh: Surat keterangan domisili"></label>
+  <label class="fld"><span>Keterangan <em>opsional</em></span><input id="b_k" maxlength="160"></label><button class="btn primary" type="submit" style="align-self:flex-start">Tambah</button></form>`,
+  ()=>{$('#bf').onsubmit=async e=>{e.preventDefault();const id='c'+Date.now().toString(36);
+    if(await save(()=>api.update('berkas/state',{custom:{[id]:{t:$('#b_t').value.trim(),k:$('#b_k').value.trim()}}}),'Berkas ditambahkan'))closeSheet()}});
+}
+function sheetHelp(){
+  store.set('helpSeen','1');schedule();
+  openSheet('Cara pakai',`<div class="guide">
+  <h4>1. Hubungkan dengan pasangan</h4><ol><li>Ketuk ikon cincin di kanan atas, lalu <b>Buat kode undangan</b>.</li><li>Kirim tautannya ke pasangan lewat WhatsApp.</li><li>Pasangan membuka tautan, daftar pakai emailnya sendiri, lalu otomatis terhubung. Satu planner hanya untuk dua akun.</li></ol>
+  <h4>2. Keuangan</h4><ol><li>Ketuk tiap kantong, isi <b>estimasi</b> kebutuhannya. Target nabung per bulan dihitung dari sini.</li><li><b>Setor</b>: catat uang yang ditabung, pilih dari siapa dan masuk ke kantong mana.</li><li><b>Pindah dana</b>: bagi setoran yang belum dialokasikan ke kantong-kantong.</li><li><b>Catat pengeluaran</b>: uang keluar dari kantong, bisa dihubungkan ke vendor.</li></ol>
+  <p class="muted">Jumlah uang boleh diketik singkat: 15jt, 2,5jt, 500rb.</p>
+  <h4>3. Vendor</h4><ol><li>Tambah vendor dengan kategori, harga, Instagram, dan nomor WA.</li><li>Tombol WhatsApp membuka chat dengan pesan pembuka, tombol Instagram membuka profilnya.</li><li>Ubah status dari Incaran sampai Lunas. Setiap bayar DP atau cicilan, ketuk <b>Catat bayar</b> supaya sisa tagihan dan kantong ikut berkurang.</li></ol>
+  <h4>4. Tamu</h4><ol><li>Ketuk <b>Tambah tamu</b>, tempel banyak nama sekaligus (satu per baris, nomor WA setelah koma).</li><li>Atur kuota tamu di Pengaturan sesuai kapasitas venue atau catering.</li><li>Ketuk ikon WhatsApp di samping nama untuk mengirim undangan. Status otomatis jadi terkirim.</li><li>Ketuk label kehadiran untuk mengganti: Belum jawab, Hadir, Tidak hadir.</li></ol>
+  <h4>5. Berkas</h4><ol><li>Pilih kondisi kalian (usia, status, TNI/Polri, lokasi akad). Berkas tambahan muncul otomatis.</li><li>Centang berkas yang sudah siap. Pasangan bisa melihat siapa yang mencentang.</li></ol>
+  <h4>6. Persiapan</h4><ol><li><b>Tugas</b>: daftar per tahap. Ketuk label nama untuk ganti penanggung jawab.</li><li><b>Seserahan & mahar</b>: isi item dan perkiraan harga, centang yang sudah dibeli.</li></ol>
+  <p class="muted" style="margin-top:14px">Semua perubahan tersimpan otomatis dan langsung terlihat oleh kalian berdua. Ganti password atau keluar dari akun lewat ikon gerigi.</p></div>`);
+}
+
+/* ---------- Interaksi ---------- */
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-tab],[data-act]');if(!el)return;
+  if(el.dataset.tab&&!el.dataset.act){S.tab=el.dataset.tab;store.set('tab',S.tab);history.replaceState(null,'','#'+S.tab);render();window.scrollTo(0,0);return}
+  const a=el.dataset.act,id=el.dataset.id;
+  if(a==='authTab'){S.authTab=el.dataset.v;S.authMsg=null;render()}
+  else if(a==='pwToggle'){const i=document.getElementById(el.dataset.for);if(i){i.type=i.type==='password'?'text':'password';el.textContent=i.type==='password'?'Lihat':'Tutup'}}
+  else if(a==='logout'){closeSheet();await sb.auth.signOut();toast('Kamu sudah keluar')}
+  else if(a==='reload')location.reload();
+  else if(a==='settings')sheetSettings();
+  else if(a==='partner')sheetPartner();
+  else if(a==='changePw')sheetChangePw();
+  else if(a==='copyInvite'){if(S.invite)copyText(inviteLink(S.invite.code))}
+  else if(a==='vendor')sheetVendor(id);
+  else if(a==='trx')sheetTrx(id,{tipe:el.dataset.tipe,vendor:el.dataset.vendor});
+  else if(a==='kantong')sheetKantong(id);
+  else if(a==='taskEdit')sheetTask(id);
+  else if(a==='addBerkas')sheetAddBerkas();
+  else if(a==='help')sheetHelp();
+  else if(a==='tamuAdd')sheetTamuBulk();
+  else if(a==='tamu')sheetTamu(id);
+  else if(a==='tplUndangan')sheetTpl();
+  else if(a==='sesEdit')sheetSes(id);
+  else if(a==='vf'){S.vendorFilter=el.dataset.v;render()}
+  else if(a==='tf'){S.taskFilter=el.dataset.v;render()}
+  else if(a==='tamuF'){S.tamuFilter=el.dataset.v;render()}
+  else if(a==='rsvp'){const x=S.tamu.find(t=>t.id===id);if(x)save(()=>api.update('tamu/'+id,{rsvp:{belum:'hadir',hadir:'tidak',tidak:'belum'}[x.rsvp||'belum']}))}
+  else if(a==='waUndang'){const x=S.tamu.find(t=>t.id===id);if(x&&!x.terkirim)save(()=>api.update('tamu/'+id,{terkirim:true}))}
+  else if(a==='pj'){const t=S.tugas.find(x=>x.id===id);if(!t)return;const nx={A:'B',B:'AB',AB:'A'}[t.pj||'AB'];save(()=>api.update('tugas/'+id,{pj:nx}))}
+  else if(a==='flag'){const s=el.dataset.s,f=el.dataset.f;const kd=S.plan.kondisi||{};const cur=s?!!kd[s]?.[f]:!!kd[f];save(()=>api.update('plan/main',{kondisi:s?{[s]:{[f]:!cur}}:{[f]:!cur}}))}
+  else if(a==='lokasi'){save(()=>api.update('plan/main',{lokasi:S.plan.lokasi==='luar'?'kua':'luar'}))}
+  else if(a==='delBerkas'){e.preventDefault();save(()=>api.update('berkas/state',{custom:{[id]:null}}),'Berkas dihapus')}
+  else if(a==='sesEstimasi'){const est=S.seserahan.reduce((s,x)=>s+(+x.harga||0),0);save(()=>api.update('kantong/'+id,{estimasi:est}),'Estimasi kantong diperbarui')}
+  else if(a==='kantongStd'){el.disabled=true;const u=S.kantong.length;save(()=>api.addMany('kantong',KANTONG_STD.map((n,i)=>({nama:n,estimasi:n==='KUA & Berkas'&&S.plan.lokasi==='luar'?600000:0,urut:u+i,...meta()}))))}
+  else if(a==='tugasStd'){el.disabled=true;let u=0;const arr=[];for(const f of Object.keys(TUGAS_STD))for(const t of TUGAS_STD[f])arr.push({judul:t,fase:f,pj:'AB',selesai:false,urut:u++,...meta()});save(()=>api.addMany('tugas',arr))}
+  else if(a==='sesStd'){el.disabled=true;let u=0;const arr=[];for(const j of ['mahar','seserahan'])for(const n of SES_STD[j])arr.push({nama:n,jenis:j,harga:0,pj:j==='mahar'?'A':'AB',dibeli:false,catatan:'',urut:u++,...meta()});save(()=>api.addMany('seserahan',arr))}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;if(!el.dataset||!el.dataset.act)return;
+  if(el.dataset.act==='task')save(()=>api.update('tugas/'+el.dataset.id,{selesai:el.checked}));
+  if(el.dataset.act==='ses')save(()=>api.update('seserahan/'+el.dataset.id,{dibeli:el.checked}));
+  if(el.dataset.act==='prep'){S.prepView=el.value;store.set('prep',el.value);render()}
+  if(el.dataset.act==='berkas')save(()=>api.update('berkas/state',{items:{[el.dataset.k]:{done:el.checked,byPihak:S.mePihak||null,by:S.userId||null,at:Date.now()}}}));
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role=button]')){e.preventDefault();e.target.click()}});
+document.addEventListener('input',e=>{if(e.target.id==='tamuQ'){S.tamuQ=e.target.value;render()}});
+
+let tt=0;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3200)}
+
+/* ---------- Mulai ---------- */
+if(!sb){S.view='config';render()}
+else{
+  sb.auth.onAuthStateChange((ev,session)=>{
+    if(ev==='PASSWORD_RECOVERY')S.recovery=true;
+    if(ev==='TOKEN_REFRESHED'||ev==='USER_UPDATED'){S.session=session;return}
+    setTimeout(()=>handleSession(session),0);
+  });
+}
+</script>
+</body>
+</html>
