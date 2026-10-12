@@ -172,6 +172,10 @@ form.f{display:flex;flex-direction:column;gap:14px;margin-top:14px}
 .fld > span{font-size:13px;font-weight:600}
 .fld em{font-style:normal;font-size:12px;color:var(--muted);font-weight:400}
 .fld input,.fld select,.fld textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:10px 12px;min-width:0}
+.moneywrap{position:relative;display:block}
+.fld > .moneywrap{font-size:inherit;font-weight:inherit}
+.moneywrap > span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;pointer-events:none}
+.fld .moneywrap input{padding-left:40px;font-variant-numeric:tabular-nums;font-weight:600}
 .fld textarea{min-height:70px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
@@ -829,7 +833,24 @@ function openSheet(title,body,mount){lastFocus=document.activeElement;$('#sheetT
 function closeSheet(){$('#scrim').hidden=true;$('#sheet').hidden=true;$('#sheetBody').innerHTML='';lastFocus&&lastFocus.isConnected&&lastFocus.focus&&lastFocus.focus()}
 $('#scrim').onclick=closeSheet;$('#sheetClose').onclick=closeSheet;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
-function moneyInputs(root){root.querySelectorAll('[data-money]').forEach(i=>{i.addEventListener('blur',()=>{const n=parseRp(i.value);i.value=fmtInput(n)})})}
+/* Kolom uang: titik ribuan muncul langsung saat mengetik (1.300.000). Singkatan 1,3jt / 500rb tetap dibaca saat kolom ditinggalkan. */
+function moneyInputs(root){root.querySelectorAll('[data-money]').forEach(i=>{
+  if(!i.parentNode.classList.contains('moneywrap')){const w=document.createElement('span');w.className='moneywrap';i.parentNode.insertBefore(w,i);w.appendChild(i);w.insertAdjacentHTML('afterbegin','<span aria-hidden="true">Rp</span>')}
+  const fmt=(v,pos)=>{
+    const digitsBefore=v.slice(0,pos).replace(/\D/g,'').replace(/^0+(?=\d)/,'').length;
+    const d=v.replace(/\D/g,'').replace(/^0+(?=\d)/,'').slice(0,13),out=d?Number(d).toLocaleString('id-ID'):'';
+    i.value=out;let p=0,seen=0;while(p<out.length&&seen<digitsBefore){if(/\d/.test(out[p]))seen++;p++}
+    try{i.setSelectionRange(p,p)}catch(e){}
+  };
+  i.addEventListener('input',()=>{const v=i.value;if(!/^[\d.\s]*$/.test(v))return;const pos=i.selectionStart??v.length;fmt(v,pos)});
+  // Hapus melewati titik: Backspace tepat setelah titik menghapus angka di depannya
+  i.addEventListener('beforeinput',e=>{
+    const v=i.value,s=i.selectionStart,t=i.selectionEnd;if(s!==t||!/^[\d.]*$/.test(v))return;
+    if(e.inputType==='deleteContentBackward'&&s>1&&v[s-1]==='.'){e.preventDefault();fmt(v.slice(0,s-2)+v.slice(s),s-2)}
+    else if(e.inputType==='deleteContentForward'&&v[s]==='.'){e.preventDefault();fmt(v.slice(0,s)+v.slice(s+2),s)}
+  });
+  i.addEventListener('blur',()=>{const n=parseRp(i.value);i.value=fmtInput(n)});
+})}
 function confirmDel(btn,fn,label){btn.onclick=async()=>{if(btn.dataset.armed){btn.disabled=true;if(await fn())closeSheet();else btn.disabled=false}else{btn.dataset.armed='1';btn.textContent=label||'Tap lagi untuk menghapus'}}}
 const opt=(v,l,sel)=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(l)}</option>`;
 const kantongOpts=(sel,none='Belum dialokasikan')=>opt('',none,sel||'')+kantongSorted().map(k=>opt(k.id,k.nama,sel)).join('');
@@ -843,7 +864,7 @@ function sheetVendor(id){
     <label class="fld"><span>Status</span><select id="v_s">${STATUS.map(([k,l])=>opt(k,l,v.status||'incaran')).join('')}</select></label></div>
     <div class="two"><label class="fld"><span>Instagram</span><input id="v_ig" maxlength="120" value="${esc(v.ig)}" placeholder="@namavendor" autocomplete="off"></label>
     <label class="fld"><span>Nomor WhatsApp</span><input id="v_wa" inputmode="tel" maxlength="20" value="${esc(v.wa)}" placeholder="0812…"></label></div>
-    <div class="two"><label class="fld"><span>Harga / penawaran</span><input id="v_h" data-money inputmode="numeric" value="${fmtInput(v.harga)}" placeholder="15jt atau 15.000.000"></label>
+    <div class="two"><label class="fld"><span>Harga / penawaran</span><input id="v_h" data-money inputmode="numeric" value="${fmtInput(v.harga)}" placeholder="15.000.000"></label>
     <label class="fld"><span>Dibayar dari kantong</span><select id="v_k">${kantongOpts(isNew?guessK(v.kategori||'Venue'):v.kantong,'Tidak dihubungkan')}</select></label></div>
     <label class="fld"><span>Tautan lain <em>website, TikTok, katalog</em></span><input id="v_l" maxlength="300" value="${esc(v.link)}" autocomplete="off"></label>
     <label class="fld"><span>Catatan</span><textarea id="v_note" maxlength="1000" placeholder="Isi paket, jadwal survei, kesan">${esc(v.catatan)}</textarea></label>
@@ -864,7 +885,7 @@ function sheetTrx(id,preset={}){
   const kSel=t.kantong??(pv?pv.kantong:'');
   openSheet(isNew?'Catat transaksi':'Ubah transaksi',`<form class="f" id="tf">
     <div class="seg">${[['masuk','Setor'],['keluar','Pengeluaran'],['pindah','Pindah dana']].map(([k,l])=>`<label><input type="radio" name="t_tipe" value="${k}" ${k===tipe?'checked':''}>${l}</label>`).join('')}</div>
-    <div class="two"><label class="fld"><span>Jumlah</span><input id="t_j" data-money inputmode="numeric" required value="${fmtInput(t.jumlah)}" placeholder="500rb atau 2,5jt"></label>
+    <div class="two"><label class="fld"><span>Jumlah</span><input id="t_j" data-money inputmode="numeric" required value="${fmtInput(t.jumlah)}" placeholder="500.000"></label>
     <label class="fld"><span>Tanggal</span><input type="date" id="t_d" value="${esc(t.tanggal||todayISO())}" required></label></div>
     <div class="fld" data-for="masuk"><span>Dari siapa</span><div class="seg">${['A','B','C'].map(k=>`<label><input type="radio" name="t_p" value="${k}" ${(t.pihak||S.mePihak||'A')===k?'checked':''}>${esc(k==='C'?'Bersama / keluarga':namaPihak(k))}</label>`).join('')}</div></div>
     <label class="fld" data-for="pindah"><span>Dari kantong</span><select id="t_dari">${kantongOpts(t.dari||'')}</select></label>
@@ -890,7 +911,7 @@ function sheetKantong(id){
   const vs=S.vendors.filter(v=>v.kantong===k.id);
   openSheet(isNew?'Kantong baru':k.nama,`<form class="f" id="kf">
     <label class="fld"><span>Nama kantong</span><input id="k_n" required maxlength="40" value="${esc(k.nama)}" placeholder="Contoh: Seserahan"></label>
-    <label class="fld"><span>Estimasi kebutuhan</span><input id="k_e" data-money inputmode="numeric" value="${fmtInput(k.estimasi)}" placeholder="25jt"></label>
+    <label class="fld"><span>Estimasi kebutuhan</span><input id="k_e" data-money inputmode="numeric" value="${fmtInput(k.estimasi)}" placeholder="25.000.000"></label>
     ${mk?`<div class="cols3 small"><div><div class="lbl">Terisi</div><div class="val num">${rp(mk.masuk)}</div></div><div><div class="lbl">Terpakai</div><div class="val num">${rp(mk.keluar)}</div></div><div><div class="lbl">Saldo</div><div class="val num">${rp(mk.masuk-mk.keluar)}</div></div></div>`:''}
     ${vs.length?`<div><div class="lbl" style="margin-bottom:6px">Vendor di kantong ini</div><div class="list">${vs.map(v=>`<div class="row between small"><span class="grow">${esc(v.nama)}</span><span class="num">${+v.harga?rp(v.harga):'—'}</span></div>`).join('')}</div></div>`:''}
     <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="k_del">Hapus kantong</button>'}</div>
@@ -1019,7 +1040,7 @@ function sheetSes(id){
   openSheet(isNew?'Item baru':'Ubah item',`<form class="f" id="sf">
     <label class="fld"><span>Nama item</span><input id="e_n" required maxlength="100" value="${esc(x.nama)}" placeholder="Contoh: Set skincare"></label>
     <div class="fld"><span>Jenis</span><div class="seg">${[['mahar','Mahar'],['seserahan','Seserahan']].map(([k,l])=>`<label><input type="radio" name="e_j" value="${k}" ${(x.jenis||'seserahan')===k?'checked':''}>${l}</label>`).join('')}</div></div>
-    <label class="fld"><span>Perkiraan harga</span><input id="e_h" data-money inputmode="numeric" value="${fmtInput(x.harga)}" placeholder="350rb"></label>
+    <label class="fld"><span>Perkiraan harga</span><input id="e_h" data-money inputmode="numeric" value="${fmtInput(x.harga)}" placeholder="350.000"></label>
     <div class="fld"><span>Yang mengurus</span>${pihakSeg('e_p',x.pj)}</div>
     <label class="fld"><span>Catatan</span><input id="e_c" maxlength="200" value="${esc(x.catatan)}" placeholder="Merek, ukuran, warna, link toko"></label>
     <label class="row small"><input type="checkbox" id="e_b" ${x.dibeli?'checked':''}> Sudah dibeli</label>
@@ -1040,7 +1061,7 @@ function sheetHelp(){
   openSheet('Cara pakai',`<div class="guide">
   <h4>1. Hubungkan dengan pasangan</h4><ol><li>Ketuk ikon cincin di kanan atas, lalu <b>Buat kode undangan</b>.</li><li>Kirim tautannya ke pasangan lewat WhatsApp.</li><li>Pasangan membuka tautan, daftar pakai emailnya sendiri, lalu otomatis terhubung. Satu planner hanya untuk dua akun.</li></ol>
   <h4>2. Keuangan</h4><ol><li>Ketuk tiap kantong, isi <b>estimasi</b> kebutuhannya. Target nabung per bulan dihitung dari sini.</li><li><b>Setor</b>: catat uang yang ditabung, pilih dari siapa dan masuk ke kantong mana.</li><li><b>Pindah dana</b>: bagi setoran yang belum dialokasikan ke kantong-kantong.</li><li><b>Catat pengeluaran</b>: uang keluar dari kantong, bisa dihubungkan ke vendor.</li></ol>
-  <p class="muted">Jumlah uang boleh diketik singkat: 15jt, 2,5jt, 500rb.</p>
+  <p class="muted">Kolom uang otomatis diberi titik saat diketik, misalnya 1.300.000.</p>
   <h4>3. Vendor</h4><ol><li>Tambah vendor dengan kategori, harga, Instagram, dan nomor WA.</li><li>Tombol WhatsApp membuka chat dengan pesan pembuka, tombol Instagram membuka profilnya.</li><li>Ubah status dari Incaran sampai Lunas. Setiap bayar DP atau cicilan, ketuk <b>Catat bayar</b> supaya sisa tagihan dan kantong ikut berkurang.</li></ol>
   <h4>4. Tamu</h4><ol><li>Ketuk <b>Tambah tamu</b>, tempel banyak nama sekaligus (satu per baris, nomor WA setelah koma).</li><li>Atur kuota tamu di Pengaturan sesuai kapasitas venue atau catering.</li><li>Ketuk ikon WhatsApp di samping nama untuk mengirim undangan. Status otomatis jadi terkirim.</li><li>Ketuk label kehadiran untuk mengganti: Belum jawab, Hadir, Tidak hadir.</li></ol>
   <h4>5. Berkas</h4><ol><li>Pilih kondisi kalian (usia, status, TNI/Polri, lokasi akad). Berkas tambahan muncul otomatis.</li><li>Centang berkas yang sudah siap. Pasangan bisa melihat siapa yang mencentang.</li></ol>
