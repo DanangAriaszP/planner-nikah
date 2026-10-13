@@ -1,0 +1,4 @@
+# Pengaturan Netlify: situs statis, tanpa proses build
+[build]
+  publish = "."
+  command = ""
