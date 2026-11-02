@@ -18,6 +18,7 @@
   --pA:#4F6B86; --pA-soft:#E1E8EF; --pB:#94656F; --pB-soft:#F0E4E6;
   --ok:#47785A; --ok-soft:#DFEBE2; --warn:#9A6F28; --warn-soft:#F2E9D7; --danger:#A04E46;
   --scrim:rgba(20,28,25,.38); --shadow:0 10px 30px rgba(20,28,25,.12);
+  --g1:#3D675C; --g2:#4F6B86; --g3:#94656F; --g4:#B08A3E; --g5:#6E8F7E; --g6:#7A6A93; --g7:#A0705A; --g8:#5F7D86; --g9:#8C8F6A;
   --f-display:"Newsreader",Georgia,"Times New Roman",serif;
   --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --r:12px; color-scheme:light;
@@ -27,7 +28,20 @@
   --accent:#8CB6A8; --accent-ink:#0F1D19; --accent-soft:#223430;
   --pA:#94AECA; --pA-soft:#243140; --pB:#CC9CA6; --pB-soft:#3A2A2E;
   --ok:#86B596; --ok-soft:#21342A; --warn:#D3A862; --warn-soft:#3A3020; --danger:#D98B82;
-  --scrim:rgba(0,0,0,.55); --shadow:0 10px 30px rgba(0,0,0,.4); color-scheme:dark}}
+  --scrim:rgba(0,0,0,.55); --shadow:0 10px 30px rgba(0,0,0,.4); color-scheme:dark;
+  --g1:#8CB6A8; --g2:#94AECA; --g3:#CC9CA6; --g4:#D3B06E; --g5:#A9C7B5; --g6:#B3A3CF; --g7:#D29C84; --g8:#8FB2BC; --g9:#BDBF95}}
+/* Riwayat pemasukan / pengeluaran */
+.riw-hit{cursor:pointer;border-radius:10px;margin:-6px;padding:6px;position:relative}
+.riw-hit:hover{background:var(--surface-2)}
+.riw-more{position:absolute;top:6px;right:6px;font-size:12px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:2px}
+.donut{display:block;margin:6px auto 4px;width:220px;max-width:100%;height:auto}
+.donut text{fill:var(--ink);font-family:var(--f-body)}
+.riw-row{display:flex;align-items:center;gap:12px;cursor:pointer}
+.riw-row:hover{background:var(--surface-2)}
+.riw-sw{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;color:var(--surface);font-weight:700;font-size:13px}
+.riw-tx{padding:10px 16px 10px 62px!important;background:var(--bg);cursor:pointer}
+.riw-tx:hover{background:var(--surface-2)}
+.datebox{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -712,9 +726,10 @@ function vendorCard(v){
 function vUang(){
   const m=money();
   let h=`<div class="sechead"><h2 class="sec">Keuangan</h2></div><div class="card">
+   <div class="riw-hit" role="button" tabindex="0" data-act="riwayat" data-t="masuk" aria-label="Lihat riwayat pemasukan"><span class="riw-more">Riwayat ›</span>
    <div class="lbl">Terkumpul dari total estimasi</div><div class="big num">${rp(m.masuk)}</div><div class="sub num">dari ${rp(m.estimasi)} · ${pct(m.masuk,m.estimasi).toFixed(0)}%</div>
-   <div class="bar" style="margin:12px 0 14px"><span style="width:${pct(m.masuk,m.estimasi)}%"></span></div>
-   <div class="cols3"><div><div class="lbl">Terpakai</div><div class="val num">${rp(m.keluar)}</div></div><div><div class="lbl">Saldo</div><div class="val num">${rp(m.saldo)}</div></div><div><div class="lbl">Kurang</div><div class="val num">${rp(Math.max(0,m.estimasi-m.masuk))}</div></div></div>
+   <div class="bar" style="margin:12px 0 8px"><span style="width:${pct(m.masuk,m.estimasi)}%"></span></div></div>
+   <div class="cols3" style="margin-top:12px"><div class="riw-hit" role="button" tabindex="0" data-act="riwayat" data-t="keluar" aria-label="Lihat riwayat pengeluaran"><div class="lbl">Terpakai ›</div><div class="val num">${rp(m.keluar)}</div></div><div class="riw-hit" role="button" tabindex="0" data-act="riwayat" data-t="masuk"><div class="lbl">Saldo ›</div><div class="val num">${rp(m.saldo)}</div></div><div class="riw-hit" role="button" tabindex="0" data-act="riwayat" data-t="masuk"><div class="lbl">Kurang ›</div><div class="val num">${rp(Math.max(0,m.estimasi-m.masuk))}</div></div></div>
    <div class="btnrow" style="margin-top:16px"><button class="btn primary sm" data-act="trx" data-tipe="masuk">${ico('plus',2)}Setor</button><button class="btn sm" data-act="trx" data-tipe="keluar">Catat pengeluaran</button><button class="btn sm" data-act="trx" data-tipe="pindah">Pindah dana</button></div></div>`;
   h+=`<div class="sechead"><h2 class="sec">Kontribusi</h2></div>`+nabungCard(m);
   h+=`<div class="sechead"><h2 class="sec">Kantong</h2><button class="btn sm" data-act="kantong">${ico('plus',2)}Kantong</button></div>`;
@@ -907,8 +922,8 @@ function sheetTrx(id,preset={}){
       if(j<=0){toast('Isi jumlah lebih dari nol');return}
       if(tp==='pindah'&&$('#t_dari').value===$('#t_k').value){toast('Pilih kantong asal dan tujuan yang berbeda');return}
       const d={tipe:tp,jumlah:j,tanggal:$('#t_d').value,kantong:$('#t_k').value,catatan:$('#t_c').value.trim(),pihak:tp==='masuk'?root.querySelector('[name=t_p]:checked').value:'',vendor:tp==='keluar'?$('#t_v').value:'',dari:tp==='pindah'?$('#t_dari').value:''};
-      if(await save(()=>isNew?api.add('transaksi',{...d,...meta()}):api.update('transaksi/'+t.id,d),'Tersimpan'))closeSheet()};
-    if(!isNew)confirmDel($('#t_del'),()=>save(()=>api.del('transaksi/'+t.id),'Transaksi dihapus'));
+      if(await save(()=>isNew?api.add('transaksi',{...d,...meta()}):api.update('transaksi/'+t.id,d),'Tersimpan')){closeSheet();if(preset.back)preset.back()}};
+    if(!isNew)confirmDel($('#t_del'),async()=>{const ok=await save(()=>api.del('transaksi/'+t.id),'Transaksi dihapus');if(ok&&preset.back)setTimeout(preset.back,0);return ok});
   });
 }
 
@@ -927,6 +942,55 @@ function sheetKantong(id){
       if(await save(()=>isNew?api.add('kantong',{...d,urut:S.kantong.length,...meta()}):api.update('kantong/'+k.id,d),'Kantong tersimpan'))closeSheet()};
     if(!isNew)confirmDel($('#k_del'),()=>save(()=>api.del('kantong/'+k.id),'Kantong dihapus'));
   });
+}
+
+/* Riwayat pemasukan / pengeluaran: periode, total, donat per kategori, daftar transaksi */
+const RIW_PER=[['semua','Semua'],['bulan','Bulan ini'],['lalu','Bulan lalu'],['30','30 hari'],['pilih','Pilih tanggal']];
+function riwRange(){
+  const r=S.riw,t=todayISO(),ym=t.slice(0,7);
+  if(r.per==='bulan')return[ym+'-01',t];
+  if(r.per==='lalu'){const n=new Date(t+'T00:00:00'),y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear(),m=(n.getMonth()+11)%12,last=new Date(y,m+1,0).getDate(),mo=String(m+1).padStart(2,'0');return[`${y}-${mo}-01`,`${y}-${mo}-${String(last).padStart(2,'0')}`]}
+  if(r.per==='30'){const d=new Date(t+'T00:00:00');d.setDate(d.getDate()-29);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return[d.toISOString().slice(0,10),t]}
+  if(r.per==='pilih')return[r.from||'0000-00-00',r.to||'9999-12-31'];
+  return['0000-00-00','9999-12-31'];
+}
+function riwLabel(){const r=S.riw,[a,b]=riwRange();if(r.per==='semua')return 'Semua waktu';if(r.per==='pilih'&&!r.from&&!r.to)return 'Semua tanggal';const f=x=>x.startsWith('0000')||x.startsWith('9999')?'…':fmtDate(x);return `${f(a)} – ${f(b)}`}
+function riwGroups(){
+  const r=S.riw,[a,b]=riwRange();
+  const tx=S.trx.filter(t=>t.tipe===r.tipe&&String(t.tanggal||'')>=a&&String(t.tanggal||'')<=b);
+  const g={};
+  for(const t of tx){
+    let key,name;
+    if(r.tipe==='masuk'){key=t.pihak in {A:1,B:1}?t.pihak:'C';name=namaPihak(key)}
+    else{const k=S.kantong.find(x=>x.id===t.kantong);key=k?k.id:'';name=k?k.nama:'Belum dialokasikan'}
+    (g[key]=g[key]||{key,name,total:0,tx:[]}).total+=+t.jumlah||0;g[key].tx.push(t);
+  }
+  const arr=Object.values(g).sort((x,y)=>y.total-x.total);
+  arr.forEach((x,i)=>{x.color=`var(--g${i%9+1})`;x.tx.sort((p,q)=>String(q.tanggal).localeCompare(String(p.tanggal))||(q.dibuat||0)-(p.dibuat||0))});
+  return{arr,total:arr.reduce((s,x)=>s+x.total,0),count:tx.length};
+}
+function donutSvg(arr,total,count){
+  const R=78,C=2*Math.PI*R,gap=arr.length>1?2.5:0;let off=0;
+  const segs=total>0?arr.map(x=>{const len=Math.max(0,x.total/total*C-gap);const s=`<circle r="${R}" cx="110" cy="110" fill="none" stroke="${x.color}" stroke-width="30" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 110 110)"/>`;off+=x.total/total*C;return s}).join(''):'';
+  return `<svg class="donut" viewBox="0 0 220 220" role="img" aria-label="Diagram pembagian per kategori"><circle r="${R}" cx="110" cy="110" fill="none" stroke="var(--surface-2)" stroke-width="30"/>${segs}<text x="110" y="106" text-anchor="middle" font-size="26" font-weight="700">${count}</text><text x="110" y="128" text-anchor="middle" font-size="12" style="fill:var(--muted)">transaksi</text></svg>`;
+}
+function riwDraw(){
+  const box=$('#riwBody');if(!box)return;
+  const r=S.riw,{arr,total,count}=riwGroups(),masuk=r.tipe==='masuk';
+  const pctTxt=x=>(total?x/total*100:0).toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
+  const txRow=t=>{const v=S.vendors.find(x=>x.id===t.vendor);const judul=t.catatan||(v?v.nama:(masuk?'Setoran':'Pengeluaran'));
+    return `<div class="riw-tx row between" role="button" tabindex="0" data-act="riwTx" data-id="${esc(t.id)}"><span class="grow"><span style="display:block;overflow-wrap:anywhere">${esc(judul)}</span><span class="sub">${esc(fmtDate(t.tanggal))}${!masuk&&v&&t.catatan?' · '+esc(v.nama):''} · ${esc(siapa(t))}</span></span><span class="amt num ${masuk?'in':'out'}">${masuk?'+':'−'}${rp(t.jumlah)}</span></div>`};
+  box.innerHTML=`<div class="seg" style="margin-top:12px">${[['masuk','Pemasukan'],['keluar','Pengeluaran']].map(([k,l])=>`<label><input type="radio" name="riw_t" data-act="riwTipe" value="${k}" ${r.tipe===k?'checked':''}>${l}</label>`).join('')}</div>
+    <div class="chips" style="margin-top:12px">${RIW_PER.map(([k,l])=>`<button class="chip" data-act="riwPer" data-v="${k}" aria-pressed="${r.per===k}">${l}</button>`).join('')}</div>
+    ${r.per==='pilih'?`<div class="datebox"><label class="fld"><span>Dari</span><input type="date" id="riw_from" data-act="riwDate" value="${esc(r.from)}"></label><label class="fld"><span>Sampai</span><input type="date" id="riw_to" data-act="riwDate" value="${esc(r.to)}"></label></div>`:''}
+    <div style="margin-top:16px"><div class="lbl">${masuk?'Pemasukan':'Pengeluaran'} · ${esc(riwLabel())}</div><div class="big num">${rp(total)}</div></div>
+    ${count?donutSvg(arr,total,count)+`<div class="list" style="margin-top:8px">${arr.map(x=>`<div class="riw-row" role="button" tabindex="0" data-act="riwOpen" data-k="${esc(x.key)}" aria-expanded="${r.open===x.key}"><span class="riw-sw" style="background:${x.color}">${esc((x.name||'?').charAt(0).toUpperCase())}</span><span class="grow"><b style="display:block;overflow-wrap:anywhere">${esc(x.name)}</b><span class="num" style="font-weight:600">${rp(x.total)}</span> <span class="sub">· ${x.tx.length} transaksi</span></span><span class="num sub" style="font-weight:600">${pctTxt(x.total)}</span></div>${r.open===x.key?x.tx.map(txRow).join(''):''}`).join('')}</div>
+      <p class="sub" style="margin:10px 2px 0">${masuk?'Dikelompokkan per orang yang menyetor.':'Dikelompokkan per kantong.'} Ketuk kategori untuk melihat transaksinya. Pindah dana antar kantong tidak dihitung.</p>`
+      :`<div class="empty">Belum ada ${masuk?'pemasukan':'pengeluaran'} di periode ini.</div>`}`;
+}
+function sheetRiwayat(tipe){
+  S.riw={tipe,per:(S.riw&&S.riw.per)||'semua',from:(S.riw&&S.riw.from)||'',to:(S.riw&&S.riw.to)||'',open:null};
+  openSheet('Riwayat','<div id="riwBody"></div>',()=>riwDraw());
 }
 
 function sheetTask(id){
@@ -1161,6 +1225,10 @@ document.addEventListener('click',async e=>{
   else if(a==='taskEdit')sheetTask(id);
   else if(a==='addBerkas')sheetAddBerkas();
   else if(a==='help')sheetHelp();
+  else if(a==='riwayat')sheetRiwayat(el.dataset.t);
+  else if(a==='riwPer'){S.riw.per=el.dataset.v;S.riw.open=null;riwDraw()}
+  else if(a==='riwOpen'){S.riw.open=S.riw.open===el.dataset.k?null:el.dataset.k;riwDraw()}
+  else if(a==='riwTx'){const back=()=>{const keep={...S.riw};openSheet('Riwayat','<div id="riwBody"></div>',()=>{S.riw=keep;riwDraw()})};sheetTrx(id,{back})}
   else if(a==='cats'||a==='catsView'){e.preventDefault();sheetCats(el.dataset.c)}
   else if(a==='catEdit'||a==='catDel'){const c=el.dataset.c,n=catList(c)[+el.dataset.i];if(n!=null)sheetCats(c,a==='catEdit'?{edit:n}:{del:n})}
   else if(a==='tamuAdd')sheetTamuBulk();
@@ -1186,6 +1254,8 @@ document.addEventListener('change',e=>{
   if(el.dataset.act==='task')save(()=>api.update('tugas/'+el.dataset.id,{selesai:el.checked}));
   if(el.dataset.act==='ses')save(()=>api.update('seserahan/'+el.dataset.id,{dibeli:el.checked}));
   if(el.dataset.act==='prep'){S.prepView=el.value;store.set('prep',el.value);render()}
+  if(el.dataset.act==='riwTipe'){S.riw.tipe=el.value;S.riw.open=null;riwDraw()}
+  if(el.dataset.act==='riwDate'){S.riw[el.id==='riw_from'?'from':'to']=el.value;S.riw.open=null;riwDraw()}
   if(el.dataset.act==='berkas')save(()=>api.update('berkas/state',{items:{[el.dataset.k]:{done:el.checked,byPihak:S.mePihak||null,by:S.userId||null,at:Date.now()}}}));
 });
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role=button]')){e.preventDefault();e.target.click()}});
