@@ -72,7 +72,8 @@ h2.sec{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0;text
 .btn.block{width:100%;justify-content:center;padding:12px}
 .btn svg{width:15px;height:15px}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
-.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;font-size:13px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:5px}
+.linkbtn svg{width:14px;height:14px;flex:none}
 
 .bar{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
 .bar > span{display:block;height:100%;background:var(--accent);border-radius:99px}
@@ -323,7 +324,8 @@ const IC={
  wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8.4 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>',
  ig:'<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="16.8" cy="7.2" r=".6" fill="currentColor"/>',
  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
- copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/>'
+ copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/>',
+ edit:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
 };
 const ico=(n,w)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w||1.7}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
 
@@ -651,7 +653,8 @@ function vBeranda(){
     ${kpi('Seserahan & mahar siap',`${sDone} <span class="muted small">/ ${S.seserahan.length}</span>`,pct(sDone,S.seserahan.length),'tugas')}
   </div>`;
   h+=`<div class="sechead"><h2 class="sec">Nabung bareng</h2><button class="btn sm" data-act="trx" data-tipe="masuk">${ico('plus',2)}Setor</button></div>`+nabungCard(m);
-  const next=S.tugas.filter(t=>!t.selesai).sort((a,b)=>FASE.indexOf(a.fase)-FASE.indexOf(b.fase)||(a.urut??0)-(b.urut??0)).slice(0,4);
+  const faseL=catList('fase');
+  const next=S.tugas.filter(t=>!t.selesai).sort((a,b)=>faseL.indexOf(catOf('fase',a))-faseL.indexOf(catOf('fase',b))||(a.urut??0)-(b.urut??0)).slice(0,4);
   if(next.length)h+=`<div class="sechead"><h2 class="sec">Berikutnya</h2><button class="btn sm ghost" data-tab="tugas">Semua tugas</button></div><div class="list">${next.map(taskRow).join('')}</div>`;
   const feed=[...S.trx.map(t=>({x:t,ts:t.dibuat||0,txt:trxText(t)})),...S.vendors.map(v=>({x:v,ts:v.dibuat||0,txt:`menambahkan vendor <b>${esc(v.nama)}</b>`}))].sort((a,b)=>b.ts-a.ts).slice(0,5);
   h+=`<div class="sechead"><h2 class="sec">Aktivitas terbaru</h2></div>`;
@@ -684,9 +687,10 @@ function vVendor(){
   if(!S.vendors.length)return h+`<div class="list"><div class="empty"><p>Catat vendor incaran beserta Instagram dan nomor WhatsApp-nya. Vendor dengan kategori sama akan berjejer, jadi mudah dibandingkan.</p><button class="btn primary" data-act="vendor">${ico('plus',2)}Tambah vendor pertama</button></div></div>`;
   const cnt=k=>S.vendors.filter(v=>(v.status||'incaran')===k).length;
   h+=`<div class="chips" role="group" aria-label="Saring status">${[['semua','Semua',S.vendors.length],...STATUS.map(([k,l])=>[k,l,cnt(k)])].map(([k,l,c])=>`<button class="chip" data-act="vf" data-v="${k}" aria-pressed="${S.vendorFilter===k}">${l} ${c}</button>`).join('')}</div>`;
+  h+=catManageBtn('vendor','Kelola kategori');
   const list=S.vendors.filter(v=>S.vendorFilter==='semua'||(v.status||'incaran')===S.vendorFilter);
-  const cats=[...KATEGORI,...new Set(list.map(v=>v.kategori).filter(c=>!KATEGORI.includes(c)))];
-  for(const c of cats){const vs=list.filter(v=>(v.kategori||'Lainnya')===c);if(!vs.length)continue;
+  const cats=catList('vendor');
+  for(const c of cats){const vs=list.filter(v=>catOf('vendor',v)===c);if(!vs.length)continue;
     h+=`<div class="vcat">${esc(c)} · ${vs.length}</div><div class="stack">${vs.map(vendorCard).join('')}</div>`}
   if(!list.length)h+=`<div class="empty">Belum ada vendor dengan status ini.</div>`;
   return h;
@@ -700,7 +704,7 @@ function vendorCard(v){
   <div class="vmeta"><div><div class="lbl">Harga</div><div class="val num">${harga?rp(harga):'—'}</div></div><div><div class="lbl">Terbayar</div><div class="val num">${rp(paid)}</div></div><div><div class="lbl">Sisa</div><div class="val num">${harga?rp(Math.max(0,harga-paid)):'—'}</div></div></div>
   ${harga?`<div class="bar"><span style="width:${pct(paid,harga)}%;background:var(--ok)"></span></div>`:''}
   ${v.catatan?`<div class="vnote">${esc(v.catatan)}</div>`:''}
-  <div class="btnrow" style="margin-top:12px">${wa?`<a class="btn sm" href="${esc(wa)}" target="_blank" rel="noopener">${ico('wa')}WhatsApp</a>`:''}${ig?`<a class="btn sm" href="${esc(ig)}" target="_blank" rel="noopener">${ico('ig')}${esc(igHandle(v.ig))}</a>`:''}${lk?`<a class="btn sm" href="${esc(lk)}" target="_blank" rel="noopener">${ico('link')}Tautan</a>`:''}<button class="btn sm" data-act="trx" data-tipe="keluar" data-vendor="${esc(v.id)}">Catat bayar</button></div>
+  <div class="btnrow" style="margin-top:12px">${wa?`<a class="btn sm" href="${esc(wa)}" target="_blank" rel="noopener">${ico('wa')}WhatsApp</a>`:''}${ig?`<a class="btn sm" href="${esc(ig)}" target="_blank" rel="noopener">${ico('ig')}${esc(igHandle(v.ig))}</a>`:''}${lk?`<a class="btn sm" href="${esc(lk)}" target="_blank" rel="noopener">${ico('link')}Tautan</a>`:''}<button class="btn sm" data-act="trx" data-tipe="keluar" data-vendor="${esc(v.id)}">Catat bayar</button><button class="btn sm" data-act="vendor" data-id="${esc(v.id)}">${ico('edit')}Ubah / hapus</button></div>
   ${v.wa?`<div class="sub" style="margin-top:8px">WA <span class="num" style="user-select:all">${esc(v.wa)}</span></div>`:''}</article>`;
 }
 
@@ -766,7 +770,8 @@ function vTugas(){
   const F=[['semua','Semua'],['belum','Belum selesai'],['A',namaPihak('A')],['B',namaPihak('B')]];
   h+=`<div class="chips">${F.map(([k,l])=>`<button class="chip" data-act="tf" data-v="${esc(k)}" aria-pressed="${S.taskFilter===k}">${esc(l)}</button>`).join('')}</div>`;
   const f=S.taskFilter,list=S.tugas.filter(t=>f==='semua'||(f==='belum'?!t.selesai:(t.pj===f||t.pj==='AB')));
-  for(const fs of FASE){const ts=list.filter(t=>(FASE.includes(t.fase)?t.fase:'Lainnya')===fs).sort((a,b)=>(a.urut??999)-(b.urut??999)||(a.dibuat||0)-(b.dibuat||0));if(!ts.length)continue;
+  h+=catManageBtn('fase','Kelola tahap');
+  for(const fs of catList('fase')){const ts=list.filter(t=>catOf('fase',t)===fs).sort((a,b)=>(a.urut??999)-(b.urut??999)||(a.dibuat||0)-(b.dibuat||0));if(!ts.length)continue;
     h+=`<div class="ghead"><h3>${esc(fs)}</h3><span class="sub num">${ts.filter(t=>t.selesai).length}/${ts.length}</span></div><div class="list">${ts.map(taskRow).join('')}</div>`}
   if(!list.length)h+=`<div class="empty">Tidak ada tugas untuk saringan ini.</div>`;
   return h;
@@ -810,6 +815,7 @@ function vTamu(){
   const F=[['semua','Semua'],['A',pihakTamu('A')],['B',pihakTamu('B')],['AB','Bersama'],['belumKirim','Belum dikirim'],['belumJawab','Belum jawab'],['hadir','Hadir']];
   h+=`<input id="tamuQ" class="search" type="search" placeholder="Cari nama atau grup" value="${esc(S.tamuQ)}" autocomplete="off">`;
   h+=`<div class="chips">${F.map(([k,l])=>`<button class="chip" data-act="tamuF" data-v="${esc(k)}" aria-pressed="${S.tamuFilter===k}">${esc(l)}</button>`).join('')}</div>`;
+  h+=catManageBtn('grup','Kelola grup');
   const q=S.tamuQ.trim().toLowerCase(),f=S.tamuFilter;
   const list=all.filter(x=>{
     if(q&&!(String(x.nama).toLowerCase().includes(q)||String(x.grup||'').toLowerCase().includes(q)))return false;
@@ -860,7 +866,7 @@ function sheetVendor(id){
   const guessK=kat=>{const k=S.kantong.find(x=>x.nama.toLowerCase().includes(String(kat).split(/[ &/]/)[0].toLowerCase()));return k?k.id:''};
   openSheet(isNew?'Vendor baru':'Ubah vendor',`<form class="f" id="vf">
     <label class="fld"><span>Nama vendor</span><input id="v_n" required maxlength="80" value="${esc(v.nama)}" placeholder="Contoh: Sekar Catering"></label>
-    <div class="two"><label class="fld"><span>Kategori</span><select id="v_c">${KATEGORI.map(k=>opt(k,k,v.kategori||'Venue')).join('')}</select></label>
+    <div class="two"><label class="fld"><span>Kategori</span><select id="v_c">${catList('vendor').map(k=>opt(k,k,v.kategori||catList('vendor')[0])).join('')}</select></label>
     <label class="fld"><span>Status</span><select id="v_s">${STATUS.map(([k,l])=>opt(k,l,v.status||'incaran')).join('')}</select></label></div>
     <div class="two"><label class="fld"><span>Instagram</span><input id="v_ig" maxlength="120" value="${esc(v.ig)}" placeholder="@namavendor" autocomplete="off"></label>
     <label class="fld"><span>Nomor WhatsApp</span><input id="v_wa" inputmode="tel" maxlength="20" value="${esc(v.wa)}" placeholder="0812…"></label></div>
@@ -927,7 +933,7 @@ function sheetTask(id){
   const t=S.tugas.find(x=>x.id===id)||{};const isNew=!t.id;
   openSheet(isNew?'Tugas baru':'Ubah tugas',`<form class="f" id="gf">
     <label class="fld"><span>Tugas</span><input id="g_j" required maxlength="120" value="${esc(t.judul)}"></label>
-    <div class="two"><label class="fld"><span>Tahap</span><select id="g_f">${FASE.map(f=>opt(f,f,t.fase||'Lainnya')).join('')}</select></label>
+    <div class="two"><label class="fld"><span>Tahap</span><select id="g_f">${(fl=>fl.map(f=>opt(f,f,t.fase||(fl.includes('Lainnya')?'Lainnya':fl[0]))).join(''))(catList('fase'))}</select></label>
     <label class="fld"><span>Tenggat <em>opsional</em></span><input type="date" id="g_d" value="${esc(t.tenggat)}"></label></div>
     <div class="fld"><span>Penanggung jawab</span><div class="seg">${['A','B','AB'].map(k=>`<label><input type="radio" name="g_p" value="${k}" ${(t.pj||'AB')===k?'checked':''}>${esc(namaPihak(k))}</label>`).join('')}</div></div>
     <div class="btnrow between"><button class="btn primary" type="submit">Simpan</button>${isNew?'':'<button class="btn danger ghost" type="button" id="g_del">Hapus tugas</button>'}</div></form>`,
@@ -993,7 +999,74 @@ function sheetPartner(){
   });
 }
 
-const grupOpts=()=>[...new Set([...GRUP_STD,...S.tamu.map(x=>x.grup).filter(Boolean)])].map(g=>`<option value="${esc(g)}">`).join('');
+const grupOpts=()=>catList('grup').map(g=>`<option value="${esc(g)}">`).join('');
+
+/* Kategori yang bisa dikelola: kategori vendor, tahap tugas, grup tamu */
+const CAT={
+  vendor:{judul:'Kategori vendor',kata:'kategori',satuan:'vendor',key:'kategoriVendor',std:KATEGORI,kind:'vendors',field:'kategori',items:()=>S.vendors,fallback:'Lainnya',min:1},
+  fase:{judul:'Tahap tugas',kata:'tahap',satuan:'tugas',key:'faseTugas',std:FASE,kind:'tugas',field:'fase',items:()=>S.tugas,fallback:'Lainnya',min:1},
+  grup:{judul:'Grup tamu',kata:'grup',satuan:'tamu',key:'grupTamu',std:GRUP_STD,kind:'tamu',field:'grup',items:()=>S.tamu,fallback:'',min:0}
+};
+const catOf=(c,x)=>String(x[CAT[c].field]||'').trim()||CAT[c].fallback;
+function catList(c){
+  const d=CAT[c],base=Array.isArray(S.plan?.[d.key])?S.plan[d.key]:d.std;
+  return [...base,...new Set(d.items().map(x=>catOf(c,x)).filter(v=>v&&!base.includes(v)))];
+}
+const catManageBtn=(c,label)=>`<div class="row" style="justify-content:flex-end;margin-top:10px"><button class="linkbtn" data-act="cats" data-c="${c}">${ico('edit')} ${label}</button></div>`;
+const sameName=(a,b)=>a.trim().toLowerCase()===b.trim().toLowerCase();
+async function catMove(c,from,to,onStep){
+  const d=CAT[c],xs=d.items().filter(x=>catOf(c,x)===from);
+  for(let i=0;i<xs.length;i+=8){
+    await Promise.all(xs.slice(i,i+8).map(x=>api.update(d.kind+'/'+x.id,{[d.field]:to})));
+    onStep&&onStep(Math.min(i+8,xs.length),xs.length);
+  }
+  return xs.length;
+}
+function sheetCats(c,ui={}){
+  const d=CAT[c],list=catList(c),count=n=>d.items().filter(x=>catOf(c,x)===n).length;
+  const rows=list.map((n,i)=>{
+    const k=count(n);
+    if(ui.edit===n)return `<form class="f cat-row" data-i="${i}" id="catRename" style="margin:0"><label class="fld"><span>Nama baru</span><input id="cat_new" required maxlength="40" value="${esc(n)}" autocomplete="off"></label><div class="btnrow"><button class="btn primary sm" type="submit">Simpan</button><button class="btn sm ghost" type="button" data-act="catsView" data-c="${c}">Batal</button></div></form>`;
+    if(ui.del===n){
+      const others=list.filter(x=>x!==n),def=c==='grup'?'':(others.includes(d.fallback)?d.fallback:others[0]);
+      const pick=k?`<label class="fld" style="margin-top:8px"><span>Pindahkan ${k} ${d.satuan} di dalamnya ke</span><select id="cat_to">${c==='grup'?opt('','Tanpa grup',def):''}${others.map(o=>opt(o,o,def)).join('')}</select></label>`:'';
+      return `<div><b>Hapus ${esc(d.kata)} "${esc(n)}"?</b>${k?'':`<div class="sub">Tidak ada ${d.satuan} di dalamnya.</div>`}${pick}<div class="btnrow" style="margin-top:10px"><button class="btn danger sm" id="cat_del_go" data-i="${i}">Ya, hapus</button><button class="btn sm ghost" type="button" data-act="catsView" data-c="${c}">Batal</button></div></div>`;
+    }
+    return `<div class="row between"><span class="grow"><b>${esc(n)}</b> <span class="sub">· ${k} ${d.satuan}</span></span><span class="btnrow" style="flex-wrap:nowrap"><button class="btn sm" data-act="catEdit" data-c="${c}" data-i="${i}">Ganti nama</button><button class="btn sm danger" data-act="catDel" data-c="${c}" data-i="${i}" ${list.length<=d.min?'disabled':''}>Hapus</button></span></div>`;
+  }).join('');
+  openSheet(d.judul,`<p class="sub" style="margin:10px 0 12px">Ganti nama atau hapus ${d.kata}. ${d.satuan[0].toUpperCase()+d.satuan.slice(1)} di dalamnya tidak ikut terhapus.</p>
+    <div class="list">${rows||`<div class="empty small">Belum ada ${d.kata}.</div>`}</div>
+    <form class="f" id="catAdd"><label class="fld"><span>Tambah ${d.kata} baru</span><input id="cat_add" required maxlength="40" autocomplete="off" placeholder="Nama ${d.kata}"></label><button class="btn sm" type="submit" style="align-self:flex-start">${ico('plus',2)}Tambah</button></form>
+    <p class="sub" id="cat_prog" hidden></p>`,
+  root=>{
+    const prog=t=>{const p=$('#cat_prog');if(p){p.hidden=false;p.textContent=t}};
+    const busy=b=>root.querySelectorAll('button,input,select').forEach(el=>el.disabled=b);
+    const taken=(name,except)=>list.some(x=>x!==except&&sameName(x,name));
+    const rf=$('#catRename');
+    if(rf){const inp=$('#cat_new');inp.focus();inp.select();
+      rf.onsubmit=async e=>{e.preventDefault();const old=list[+rf.dataset.i],nw=inp.value.trim();
+        if(!nw||nw===old)return sheetCats(c);
+        if(taken(nw,old))return toast(`Nama "${nw}" sudah dipakai ${d.kata} lain.`);
+        busy(true);
+        const ok=await save(async()=>{
+          await api.patchWedding({[d.key]:list.map(x=>x===old?nw:x)});
+          await catMove(c,old,nw,(a,b)=>prog(`Memperbarui ${a}/${b} ${d.satuan}…`));
+        },`${d.kata[0].toUpperCase()+d.kata.slice(1)} diganti jadi "${nw}"`);
+        ok?sheetCats(c):busy(false)}}
+    const dg=$('#cat_del_go');
+    if(dg)dg.onclick=async()=>{const name=list[+dg.dataset.i],sel=$('#cat_to'),to=sel?sel.value:'';
+      busy(true);
+      const ok=await save(async()=>{
+        await catMove(c,name,to,(a,b)=>prog(`Memindahkan ${a}/${b} ${d.satuan}…`));
+        await api.patchWedding({[d.key]:catList(c).filter(x=>x!==name)});
+      },`${d.kata[0].toUpperCase()+d.kata.slice(1)} "${name}" dihapus`);
+      ok?sheetCats(c):busy(false)};
+    $('#catAdd').onsubmit=async e=>{e.preventDefault();const nw=$('#cat_add').value.trim();if(!nw)return;
+      if(taken(nw))return toast(`Nama "${nw}" sudah ada.`);
+      busy(true);
+      if(await save(()=>api.patchWedding({[d.key]:[...list,nw]}),`${d.kata[0].toUpperCase()+d.kata.slice(1)} "${nw}" ditambahkan`))sheetCats(c);else busy(false)};
+  });
+}
 const pihakSeg=(name,sel)=>`<div class="seg">${['A','B','AB'].map(k=>`<label><input type="radio" name="${name}" value="${k}" ${(sel||'AB')===k?'checked':''}>${esc(k==='AB'?'Bersama':(k==='A'?S.plan.namaA:S.plan.namaB)||k)}</label>`).join('')}</div>`;
 
 function sheetTamuBulk(){
@@ -1088,6 +1161,8 @@ document.addEventListener('click',async e=>{
   else if(a==='taskEdit')sheetTask(id);
   else if(a==='addBerkas')sheetAddBerkas();
   else if(a==='help')sheetHelp();
+  else if(a==='cats'||a==='catsView'){e.preventDefault();sheetCats(el.dataset.c)}
+  else if(a==='catEdit'||a==='catDel'){const c=el.dataset.c,n=catList(c)[+el.dataset.i];if(n!=null)sheetCats(c,a==='catEdit'?{edit:n}:{del:n})}
   else if(a==='tamuAdd')sheetTamuBulk();
   else if(a==='tamu')sheetTamu(id);
   else if(a==='tplUndangan')sheetTpl();
